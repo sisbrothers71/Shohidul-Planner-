@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>সহিদুল প্ল্যানার — পার্সোনাল লাইফ ম্যানেজার</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══ THEMES CONFIGURATION ══ */
+:root {
+  --bg:#0f1117; --surface:#1a1d27; --surface2:#22263a; --surface3:#2a2f47;
+  --accent:#4ade80; --accent2:#facc15; --red:#f87171; --blue:#60a5fa; --purple:#c084fc;
+  --text:#e2e8f0; --dim:#94a3b8; --border:#2d3448;
+  --g-soft:#16a34a22; --y-soft:#ca8a0422; --r-soft:#dc262622;
+}
+body.theme-comfort {
+  --bg:#121824; --surface:#1e293b; --surface2:#334155; --surface3:#475569;
+  --accent:#38bdf8; --accent2:#fb923c; --red:#f87171; --blue:#60a5fa; --purple:#c084fc;
+  --text:#f8fafc; --dim:#94a3b8; --border:#334155;
+  --g-soft:#0284c722; --y-soft:#ea580c22; --r-soft:#dc262622;
+}
+body.theme-light {
+  --bg:#f1f5f9; --surface:#ffffff; --surface2:#f8fafc; --surface3:#e2e8f0;
+  --accent:#16a34a; --accent2:#ca8a04; --red:#dc2626; --blue:#2563eb; --purple:#9333ea;
+  --text:#0f172a; --dim:#64748b; --border:#cbd5e1;
+  --g-soft:#16a34a15; --y-soft:#ca8a0415; --r-soft:#dc262615;
+}
+body.theme-oled {
+  --bg:#000000; --surface:#0a0a0a; --surface2:#121212; --surface3:#1c1c1e;
+  --accent:#00ff66; --accent2:#ffcc00; --red:#ff3b30; --blue:#007aff; --purple:#af52de;
+  --text:#ffffff; --dim:#8e8e93; --border:#2c2c2e;
+  --g-soft:#00ff6611; --y-soft:#ffcc0011; --r-soft:#ff3b3011;
+}
+body.theme-sakura {
+  --bg:#fff5f5; --surface:#ffffff; --surface2:#fff0f2; --surface3:#ffe3e7;
+  --accent:#ff7b90; --accent2:#ffb3c1; --red:#e05368; --blue:#6ba4e8; --purple:#b37beb;
+  --text:#4a282e; --dim:#8c686e; --border:#ffd0d6;
+  --g-soft:#ff7b901c; --y-soft:#ffb3c122; --r-soft:#e053681c;
+}
+body.theme-ocean {
+  --bg:#0b192c; --surface:#15304b; --surface2:#1e3e62; --surface3:#244877;
+  --accent:#00ffd2; --accent2:#e0a96d; --red:#ff6b6b; --blue:#3a86ff; --purple:#8338ec;
+  --text:#eef5fc; --dim:#9bb1c9; --border:#244877;
+  --g-soft:#00ffd21c; --y-soft:#e0a96d22; --r-soft:#ff6b6b22;
+}
+
+/* ══ GLOBAL RESET & LAYOUT ══ */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; }
+body { background: var(--bg); color: var(--text); padding: 20px; transition: background 0.3s, color 0.3s; padding-bottom: 80px; }
+.container { max-width: 1300px; margin: 0 auto; }
+
+/* Global Header & Month Navigator Selector (Requirement 1) */
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: var(--surface); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border); flex-wrap: wrap; gap: 15px; }
+.brand h1 { font-size: 1.6rem; color: var(--text); display: flex; align-items: center; gap: 10px; }
+.brand p { font-size: 0.85rem; color: var(--dim); margin-top: 2px; }
+.month-slider-nav { display: flex; align-items: center; gap: 10px; background: var(--surface2); padding: 5px 12px; border-radius: 30px; border: 1px solid var(--border); }
+.month-nav-btn { background: var(--surface3); border: 1px solid var(--border); color: var(--text); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; transition: all 0.2s; }
+.month-nav-btn:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.current-month-display { font-weight: 700; font-size: 1.05rem; color: var(--accent2); min-width: 120px; text-align: center; }
+
+/* Migration Dashboard Banner (Requirement 3) */
+.migration-banner { display: none; background: var(--y-soft); border: 1px dashed var(--accent2); border-radius: 10px; padding: 15px; margin-bottom: 20px; align-items: center; justify-content: space-between; gap: 15px; animation: fadeIn 0.3s ease; }
+.migration-text { font-size: 0.95rem; color: var(--text); }
+
+/* ══ NAVIGATION TABS ══ */
+.tabs-nav { display: flex; gap: 8px; background: var(--surface2); padding: 6px; border-radius: 10px; margin-bottom: 25px; border: 1px solid var(--border); overflow-x: auto; white-space: nowrap; }
+.tab-btn { background: transparent; border: none; color: var(--dim); padding: 10px 18px; font-size: 0.95rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+.tab-btn:hover { background: var(--surface3); color: var(--text); }
+.tab-btn.active { background: var(--surface); color: var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.15); border: 1px solid var(--border); }
+.tab-panel { display: none; animation: fadeIn 0.3s ease-in-out; }
+.tab-panel.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ══ CORE UI COMPONENTS ══ */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+.card-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 8px; color: var(--text); }
+
+/* Form Control Elements */
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 0.85rem; color: var(--dim); margin-bottom: 5px; font-weight: 500; }
+.input-row { display: flex; gap: 10px; }
+input[type="text"], input[type="number"], input[type="password"], select, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px; color: var(--text); font-size: 0.95rem; outline: none; transition: border 0.2s; }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+.btn { background: var(--surface3); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; text-align: center; justify-content: center; }
+.btn:hover { background: var(--border); }
+.btn-accent { background: var(--g-soft); border-color: var(--accent); color: var(--accent); }
+.btn-accent:hover { background: var(--accent); color: var(--bg); }
+.btn-danger { background: var(--r-soft); border-color: var(--red); color: var(--red); }
+.btn-danger:hover { background: var(--red); color: var(--text); }
+.badge { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+.badge-high { background: var(--r-soft); color: var(--red); }
+.badge-mid { background: var(--y-soft); color: var(--accent2); }
+.badge-low { background: var(--g-soft); color: var(--accent); }
+.badge-blue { background: #2563eb33; color: var(--blue); }
+
+/* Scrollable Management Panel */
+.scrollable-panel { max-height: 380px; overflow-y: auto; padding-right: 5px; }
+.scrollable-panel::-webkit-scrollbar { width: 6px; }
+.scrollable-panel::-webkit-scrollbar-track { background: var(--surface2); border-radius: 4px; }
+.scrollable-panel::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
+
+/* ══ AI COACHING BOX ══ */
+.ai-box { background: linear-gradient(135deg, var(--surface), var(--surface2)); border: 1px dashed var(--accent); position: relative; }
+#aiAdvOutput { background: var(--surface3); border-radius: 8px; padding: 15px; font-size: 0.95rem; line-height: 1.6; margin-top: 12px; border-left: 4px solid var(--accent); }
+
+/* ══ TO-DO MODULE (Requirement 2) ══ */
+.task-item { display: flex; align-items: center; justify-content: space-between; background: var(--surface2); padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); gap: 10px; }
+.task-item.completed { opacity: 0.55; }
+.task-item.completed .task-text { text-decoration: line-through; color: var(--dim); }
+.task-left { display: flex; align-items: center; gap: 10px; flex: 1; }
+.task-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
+.task-meta { display: flex; gap: 6px; margin-top: 4px; align-items: center; flex-wrap: wrap; }
+
+/* ══ WEEKLY ROUTINE LAYOUT ══ */
+.routine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.routine-day-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+.day-title { font-weight: 700; font-size: 0.95rem; color: var(--accent2); margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+.slot-item { background: var(--surface3); padding: 6px 8px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 5px; border-left: 3px solid var(--blue); position: relative; }
+.slot-item .del-slot-btn { position: absolute; right: 4px; top: 4px; background: transparent; border: none; color: var(--red); cursor: pointer; font-size: 0.75rem; display: none; }
+.slot-item:hover .del-slot-btn { display: block; }
+.slot-time { font-weight: 600; color: var(--text); }
+.slot-desc { color: var(--dim); margin-top: 1px; }
+
+/* Timeline UI on Dashboard */
+.timeline-item { background: var(--surface2); border-left: 3px solid var(--accent2); padding: 8px 12px; border-radius: 0 8px 8px 0; margin-bottom: 6px; font-size: 0.9rem; }
+
+/* ══ CATEGORY EXPENSE PROGRESS BAR (Requirement 5) ══ */
+.budget-status-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px; text-align: center; }
+@media (max-width: 600px) { .budget-status-panel { grid-template-columns: 1fr; } }
+.b-status-box { background: var(--surface2); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+.b-status-val { font-size: 1.25rem; font-weight: 700; margin-top: 4px; }
+.deficit-alert { color: var(--red) !important; }
+.surplus-alert { color: var(--accent) !important; }
+
+.category-monitor-card { background: var(--surface2); border-radius: 10px; padding: 12px; border: 1px solid var(--border); margin-bottom: 8px; }
+.category-monitor-info { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 500; margin-bottom: 6px; }
+.progress-bar-bg { width: 100%; height: 8px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
+.progress-bar-fill { height: 100%; width: 0%; background: var(--blue); border-radius: 4px; transition: width 0.3s ease, background-color 0.3s; }
+.progress-bar-fill.warning { background: var(--red); }
+
+.budget-field-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--surface2); border-radius: 8px; margin-bottom: 6px; border: 1px solid var(--border); }
+
+/* Ledger Data Table */
+.ledger-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left; }
+.ledger-table th { background: var(--surface2); color: var(--dim); padding: 10px; font-weight: 600; border-bottom: 2px solid var(--border); }
+.ledger-table td { padding: 10px; border-bottom: 1px solid var(--border); }
+.amt-credit { color: var(--accent); font-weight: 600; }
+.amt-debit { color: var(--red); font-weight: 600; }
+
+/* ══ CUSTOM MONTHLY HABIT GRID ══ */
+.habit-container { display: flex; flex-direction: column; gap: 15px; }
+.single-habit-row { background: var(--surface2); border-radius: 10px; padding: 15px; border: 1px solid var(--border); }
+.habit-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.habit-row-title { font-weight: 600; font-size: 1rem; color: var(--accent); }
+.month-grid-wrapper { overflow-x: auto; padding-bottom: 5px; }
+.month-calendar-grid { display: grid; gap: 5px; }
+.grid-day-cell { height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: var(--surface3); font-size: 0.75rem; font-weight: 600; color: var(--dim); cursor: pointer; border: 1px solid var(--border); user-select: none; transition: all 0.1s; }
+.grid-day-cell.done { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+/* ══ INFORMATION VAULT ══ */
+.vault-lock-screen { text-align: center; padding: 40px 20px; }
+.vault-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+.vault-secret { background: var(--surface3); padding: 8px; border-radius: 6px; font-family: monospace; font-size: 0.95rem; color: var(--accent2); margin-top: 5px; word-break: break-all; }
+
+/* ══ BOTTOM STATUS BAR ══ */
+.status-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--dim); z-index: 100; }
+
+/* ══ PREMIUM PRINT MEDIA DESIGNS (Requirement 6) ══ */
+@media print {
+  body { background: #ffffff !important; color: #000000 !important; padding: 0; margin: 0; }
+  .tabs-nav, header, form, button, .status-bar, .habit-management, #vaultLockScreen, #panel-settings, .btn { display: none !important; }
+  .tab-panel { display: block !important; opacity: 1 !important; transform: none !important; }
+  .card { background: #ffffff !important; border: 1px solid #cbd5e1 !important; page-break-inside: avoid; color: #000000 !important; box-shadow: none !important; margin-bottom: 15px !important; }
+  .card-title { color: #000000 !important; border-bottom: 2px solid #000000 !important; font-size: 1.3rem !important; }
+  .grid-2 { grid-template-columns: 1fr !important; gap: 0 !important; }
+  .scrollable-panel { max-height: none !important; overflow: visible !important; }
+  .task-item, .category-monitor-card, .budget-field-row { background: #f8fafc !important; border: 1px solid #e2e8f0 !important; color: #000000 !important; }
+  .progress-bar-bg { background: #e2e8f0 !important; border: 1px solid #cbd5e1 !important; }
+  .progress-bar-fill { background: #475569 !important; }
+  .ledger-table th { background: #f1f5f9 !important; color: #000000 !important; border-bottom: 2px solid #94a3b8 !important; }
+  .ledger-table td { border-bottom: 1px solid #e2e8f0 !important; color: #000000 !important; }
+  .grid-day-cell { background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #64748b !important; }
+  .grid-day-cell.done { background: #cbd5e1 !important; color: #000000 !important; font-weight: bold !important; }
+  .print-report-header { display: block !important; text-align: center; margin-bottom: 30px; border-bottom: 3px double #000000; padding-bottom: 10px; }
+  .print-report-header h1 { font-size: 2rem; margin-bottom: 5px; }
+}
+.print-report-header { display: none; }
+</style>
+</head>
+<body class="theme-sakura">
+
+<div class="print-report-header">
+  <h1>🌸 সহিদুল প্ল্যানার — মান্থলি স্টেটমেন্ট রিপোর্ট</h1>
+  <p>ব্যবহারকারী: মোহাম্মদ শাহিদুল ইসলাম | রিপোর্ট মাস: <span id="printMonthName"></span></p>
+  <p style="font-size: 0.85rem; margin-top: 5px; color: #475569;">Generated via System Engine Database Auto-Report</p>
+</div>
+
+<div class="container">
+  
+  <header>
+    <div class="brand">
+      <h1>🌸 সহিদুল প্ল্যানার <span style="font-size:1rem; opacity:0.6;">v5.0</span></h1>
+      <p>পার্সোনাল রুটিন, কাস্টম হ্যাবিট অ্যান্ড মান্থলি বাজেট কন্ট্রোলার</p>
+    </div>
+    <div class="month-slider-nav">
+      <button class="month-nav-btn" onclick="navigateMonth(-1)">◀</button>
+      <div class="current-month-display" id="monthLabelDisplay">জুন ২০২৬</div>
+      <button class="month-nav-btn" onclick="navigateMonth(1)">▶</button>
+    </div>
+  </header>
+
+  <div class="migration-banner" id="migrationActionBanner">
+    <div class="migration-text">
+      <b>📋 ডাটাবেজ নোটিশ:</b> এই মাসের জন্য কোনো কাস্টম রুটিন বা অভ্যাস সেটআপ পাওয়া যায়নি। আপনি কি গত মাস থেকে আপনার রুটিন ও অভ্যাসগুলোর তালিকা এই মাসে কপি করতে চান?
+    </div>
+    <button class="btn btn-accent" style="white-space:nowrap;" onclick="triggerDataMigration()">কপি করুন</button>
+  </div>
+
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('dashboard')">📊 ড্যাশবোর্ড</button>
+    <button class="tab-btn" onclick="switchTab('calendar')">📆 ক্যালেন্ডার</button>
+    <button class="tab-btn" onclick="switchTab('tasks')">✅ টু-ডু লিস্ট</button>
+    <button class="tab-btn" onclick="switchTab('routine')">🕒 সাপ্তাহিক রুটিন</button>
+    <button class="tab-btn" onclick="switchTab('habits')">🔁 পুরো মাসের অভ্যাস গ্রিড</button>
+    <button class="tab-btn" onclick="switchTab('budget')">💰 হিসাবপাতি ও বাজেট</button>
+    <button class="tab-btn" onclick="switchTab('vault')">🔒 সিকিউর ভল্ট</button>
+    <button class="tab-btn" onclick="switchTab('settings')">⚙️ সেটিংস</button>
+  </nav>
+
+  <div id="panel-dashboard" class="tab-panel active">
+    <div class="card ai-box">
+      <div class="card-title">
+        <span>🤖 এআই গাইডেন্স ও দৈনিক লাইভ পরামর্শ</span>
+        <button class="btn btn-accent" style="padding:4px 12px; font-size:0.8rem;" onclick="printMonthlyReport()">📄 মান্থলি রিপোর্ট প্রিন্ট/PDF</button>
+      </div>
+      <div id="aiAdvOutput">অ্যানালাইসিস করা হচ্ছে...</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" id="timelineTitle">🕒 আজকের দিনের সাপ্তাহিক সূচি</div>
+        <div class="scrollable-panel" id="dashTimelineContainer">
+          </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">🎯 এই মাসের জরুরি পেন্ডিং কাজসমূহ</div>
+        <div class="scrollable-panel" id="dashTasksContainer">
+          </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" id="dailyScheduleTitle">📋 আজকের পূর্ণ টাইম শিডিউল</div>
+      <div id="dailyScheduleContainer" style="display:grid; gap:6px;"></div>
+    </div>
+  </div>
+
+  <!-- ══ CALENDAR TAB PANEL ══ -->
+  <div id="panel-calendar" class="tab-panel">
+    <div class="card">
+      <div class="card-title">
+        <span>📆 মাসিক ক্যালেন্ডার ভিউ — <span id="calMonthTitle"></span></span>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-accent" style="padding:4px 12px; font-size:0.8rem;" onclick="openCalendarEventModal()">➕ ইভেন্ট যোগ</button>
+        </div>
+      </div>
+
+      <!-- Calendar Grid -->
+      <div style="overflow-x:auto;">
+        <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:3px; min-width:560px;">
+          <div style="text-align:center; font-weight:700; font-size:0.8rem; color:var(--red); padding:6px;">রবি</div>
+          <div style="text-align:center; font-weight:700; font-size:0.8rem; color:var(--text); padding:6px;">সোম</div>
+          <div style="text-align:center; font-weight:700; font-size:0.8rem; color:var(--text); padding:6px;">মঙ্গল</div>
+          <div style="text-align:center; font-weight:700; font-size:0.8rem; color:var(--text); padding:6px;">বুধ</div>
+          <div style="text-align:center; font-weight:700; font-size:0.8rem; color:var(--text); padding:6px;">বৃহস্পতি</div>
+          <div style="text-align:center; font-weight:700; font-size:0.8rem; color:var(--text); padding:6px;">শুক্র</div>
+          <div style="text-align:center; font-weight:700; font-size:0.8rem; color:var(--accent); padding:6px;">শনি</div>
+        </div>
+        <div id="calendarGrid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:3px; min-width:560px;"></div>
+      </div>
+    </div>
+
+    <!-- Day Detail Panel -->
+    <div class="card" id="calDayDetailPanel" style="display:none;">
+      <div class="card-title">
+        <span>📋 <span id="calDayDetailTitle">নির্বাচিত দিনের বিবরণ</span></span>
+        <button onclick="document.getElementById('calDayDetailPanel').style.display='none'" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:1.2rem;">✕</button>
+      </div>
+      <div id="calDayDetailContent"></div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div id="calEventModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:200; align-items:center; justify-content:center;">
+      <div style="background:var(--surface); border-radius:14px; padding:25px; max-width:420px; width:90%; border:1px solid var(--border); box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+          <b style="font-size:1.1rem;">📅 নতুন ক্যালেন্ডার ইভেন্ট</b>
+          <button onclick="closeCalendarEventModal()" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:1.3rem;">✕</button>
+        </div>
+        <div class="form-group">
+          <label>ইভেন্টের শিরোনাম *</label>
+          <input type="text" id="calEvTitle" placeholder="উদা: পরীক্ষা, মিটিং, ডাক্তার">
+        </div>
+        <div class="grid-2" style="gap:10px;">
+          <div class="form-group">
+            <label>তারিখ (দিন) *</label>
+            <input type="number" id="calEvDay" min="1" max="31" placeholder="১–৩১">
+          </div>
+          <div class="form-group">
+            <label>রং / ধরন</label>
+            <select id="calEvColor">
+              <option value="accent">🟢 সাধারণ</option>
+              <option value="red">🔴 জরুরি</option>
+              <option value="blue">🔵 মিটিং</option>
+              <option value="accent2">🟡 পরীক্ষা</option>
+              <option value="purple">🟣 ব্যক্তিগত</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2" style="gap:10px;">
+          <div class="form-group">
+            <label>শুরুর সময় (HH:MM)</label>
+            <input type="time" id="calEvStart" placeholder="09:00">
+          </div>
+          <div class="form-group">
+            <label>শেষের সময় (HH:MM)</label>
+            <input type="time" id="calEvEnd" placeholder="10:00">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>নোট / বিবরণ (ঐচ্ছিক)</label>
+          <textarea id="calEvNote" rows="2" placeholder="বিস্তারিত লিখুন..."></textarea>
+        </div>
+        <button class="btn btn-accent" style="width:100%;" onclick="saveCalendarEvent()">💾 ইভেন্ট সেভ করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-tasks" class="tab-panel">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">📝 নতুন কাজ যোগ করুন</div>
+        <form id="taskForm" onsubmit="addTask(event)">
+          <div class="form-group">
+            <label>কাজের বিবরণ *</label>
+            <input type="text" id="taskName" placeholder="উদা: জাপানি ভাষার ৩য় অধ্যায় রিভিশন" required>
+          </div>
+          <div class="grid-2" style="gap:10px;">
+            <div class="form-group">
+              <label>অগ্রাধিকার (Priority)</label>
+              <select id="taskPriority">
+                <option value="high">High (জরুরি)</option>
+                <option value="medium" selected>Medium (স্বাভাবিক)</option>
+                <option value="low">Low (সাধারণ)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>তারিখ (দিন)</label>
+              <input type="number" id="taskDay" min="1" max="31" placeholder="১-৩১ তারিখ">
+            </div>
+          </div>
+          <div class="grid-2" style="gap:10px;">
+            <div class="form-group">
+              <label>শুরুর সময় (HH:MM)</label>
+              <input type="time" id="taskTimeStart">
+            </div>
+            <div class="form-group">
+              <label>শেষের সময় (HH:MM)</label>
+              <input type="time" id="taskTimeEnd">
+            </div>
+          </div>
+          <div id="taskOverlapWarning" style="display:none; background:var(--r-soft); border:1px solid var(--red); border-radius:8px; padding:8px 12px; margin-bottom:10px; font-size:0.85rem; color:var(--red);">
+            ⚠️ সময় সংঘর্ষ! এই সময়ে অন্য একটি কাজ আছে।
+          </div>
+          <div class="form-group">
+            <label>নোট / মন্তব্য (ঐচ্ছিক)</label>
+            <textarea id="taskNote" rows="2" placeholder="বিস্তারিত নোট লিখুন..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-accent" style="width:100%;">💾 টাস্ক সেভ করুন</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>📋 টাস্ক ম্যানেজার (<span id="taskCountText">০</span>)</span>
+        </div>
+        <div class="scrollable-panel" id="taskListContainer">
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-routine" class="tab-panel">
+    <div class="card">
+      <div class="card-title">➕ রুটিনে নতুন টাইম স্লট বা ক্লাস যোগ করুন</div>
+      <form id="routineSlotForm" onsubmit="addCustomRoutineSlot(event)" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        <div class="form-group" style="flex:1; min-width:140px; margin-bottom:0;">
+          <label>সপ্তাহের দিন সিলেক্ট করুন</label>
+          <select id="slotDay" required>
+            <option value="Sat">শনিবার (Saturday)</option>
+            <option value="Sun">রবিবার (Sunday)</option>
+            <option value="Mon">সোমবার (Monday)</option>
+            <option value="Tue">মঙ্গলবার (Tuesday)</option>
+            <option value="Wed">বুধবার (Wednesday)</option>
+            <option value="Thu">বৃহস্পতিবার (Thursday)</option>
+            <option value="Fri">শুক্রবার (Friday)</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1; min-width:130px; margin-bottom:0;">
+          <label>সময়কাল (Time Slot)</label>
+          <input type="text" id="slotTimeStart" type="time" required>
+        </div>
+        <div class="form-group" style="flex:1; min-width:100px; margin-bottom:0;">
+          <label>শেষ (HH:MM)</label>
+          <input type="time" id="slotTimeEnd" required>
+        </div>
+        <div class="form-group" style="flex:2; min-width:180px; margin-bottom:0;">
+          <label>ক্লাসের নাম / কাজের বিবরণ</label>
+          <input type="text" id="slotDesc" placeholder="উদা: C10 Math / জাপানি প্র্যাকটিস" required>
+        </div>
+        <button type="submit" class="btn btn-accent" style="height:42px;">⚡ স্লট যোগ করুন</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🕒 কাস্টম রুটিন কনফিগারেশন প্যানেল</div>
+      <div class="routine-grid" id="routineGridContainer">
+        </div>
+    </div>
+  </div>
+
+  <div id="panel-habits" class="tab-panel">
+    <div class="card">
+      <div class="card-title">⚙️ ট্র্যাকিং তালিকা ম্যানেজমেন্ট</div>
+      <form id="habitForm" onsubmit="addNewHabitType(event)" style="display:flex; gap:10px;">
+        <input type="text" id="newHabitName" placeholder="নতুন অভ্যাসের নাম লিখুন (উদা: বুক রিডিং, জিম, ডায়েরি)" required>
+        <button type="submit" class="btn btn-accent" style="white-space:nowrap;">➕ অভ্যাস যোগ করুন</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>🔁 অভ্যাস ট্র্যাকিং ক্যালেন্ডার শিট</span>
+      </div>
+      <div class="habit-container" id="habitRowsContainer">
+        </div>
+    </div>
+  </div>
+
+  <div id="panel-budget" class="tab-panel">
+    <div class="card">
+      <div class="card-title">💰 মান্থলি বাজেট ব্যালেন্স ক্যালকুলেটর</div>
+      <div class="budget-status-panel">
+        <div class="b-status-box">
+          <div style="font-size:0.85rem; color:var(--dim);">মোট মূল বাজেট</div>
+          <div class="b-status-val" id="bTotalVal" style="color:var(--blue);">৳০</div>
+        </div>
+        <div class="b-status-box">
+          <div style="font-size:0.85rem; color:var(--dim);">খাত ভিত্তিক বরাদ্দকৃত</div>
+          <div class="b-status-val" id="bAllocatedVal" style="color:var(--accent2);">৳০</div>
+        </div>
+        <div class="b-status-box">
+          <div style="font-size:0.85rem; color:var(--dim);">অবশিষ্ট / ঘাটতি বাজেট</div>
+          <div class="b-status-val" id="bStatusVal">৳০</div>
+        </div>
+      </div>
+      
+      <div class="grid-2" style="margin-top:15px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label>চলতি মাসের মূল বাজেট আপডেট করুন (৳)</label>
+          <div class="input-row">
+            <input type="number" id="mainBudgetInput" placeholder="৳ মোট অ্যামাউন্ট">
+            <button class="btn btn-accent" onclick="saveMainBudget()">💾 আপডেট</button>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:center; background:var(--surface2); border-radius:8px; padding:10px; border:1px solid var(--border);" id="budgetSummaryMessage">
+          </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📂 খাত ভিত্তিক লাইভ খরচ ও বরাদ্দ প্রোগ্রেস মনিটর</div>
+      <div class="grid-2" id="categoryMonitorGrid">
+        </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">📂 খাতের তালিকা ও বাজেট বরাদ্দ করুন</div>
+        <div style="margin-bottom:15px; background:var(--surface2); padding:10px; border-radius:8px; border:1px solid var(--border);">
+          <div class="input-row">
+            <input type="text" id="newCategoryInput" placeholder="নতুন খাতের নাম লিখুন">
+            <button class="btn btn-accent" style="padding:8px 12px;" onclick="addNewBudgetCategory()">➕ যোগ</button>
+          </div>
+        </div>
+        <div class="scrollable-panel" style="max-height: 260px;" id="budgetFieldsContainer">
+          </div>
+        <button class="btn btn-accent" style="width:100%; margin-top:10px;" onclick="saveSectorBudgets()">💾 খাত ভিত্তিক বাজেট সেভ করুন</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💸 দৈনিক খরচ ও আয়ের এন্ট্রি খাতা</div>
+        <form id="ledgerForm" onsubmit="addLedgerRecord(event)">
+          <div class="form-group">
+            <label>বিবরণ / লেনদেনের নাম *</label>
+            <input type="text" id="ledTitle" placeholder="উদা: চাল ও ডাল কেনা বা টিউশনি ফি" required>
+          </div>
+          <div class="grid-2" style="gap:10px;">
+            <div class="form-group">
+              <label>টাইপ</label>
+              <select id="ledType" onchange="toggleLedgerCategorySelect()">
+                <option value="debit" selected>খরচ (Debit)</option>
+                <option value="credit">আয় (Credit)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>ক্যাটাগরি খাত</label>
+              <select id="ledCategory">
+                </select>
+            </div>
+          </div>
+          <div class="grid-2" style="gap:10px; margin-bottom:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>টাকার পরিমাণ (৳) *</label>
+              <input type="number" id="ledAmount" placeholder="৳ অ্যামাউন্ট" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>তারিখ (দিন)</label>
+              <input type="number" id="ledDay" min="1" max="31" placeholder="১-৩১ তারিখ">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-accent" style="width:100%;">⚡ লেজারে যুক্ত করুন</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📑 এই মাসের আয়-ব্যয় খতিয়ান (Ledger Statements)</div>
+      <div class="scrollable-panel" style="max-height: 300px;">
+        <table class="ledger-table">
+          <thead>
+            <tr>
+              <th>দিন</th>
+              <th>বিবরণ</th>
+              <th>ক্যাটাগরি</th>
+              <th>টাইপ</th>
+              <th>পরিমাণ</th>
+              <th>অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody id="ledgerTableBody">
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-vault" class="tab-panel">
+    <div class="card">
+      <div class="card-title">🔒 ব্যক্তিগত তথ্য ভল্ট (Encrypted Storage)</div>
+      
+      <div id="vaultLockScreen" class="vault-lock-screen">
+        <div style="font-size:3rem; margin-bottom:10px;">🔑</div>
+        <p style="margin-bottom:15px; color:var(--dim);">ভল্টের কন্টেন্ট আনলক করতে আপনার ৪ ডিজিটের সিক্রেট পিন দিন।</p>
+        <div style="max-width:240px; margin:0 auto; display:flex; gap:10px;">
+          <input type="password" id="vaultPinInput" maxlength="4" placeholder="••••" style="text-align:center; font-size:1.4rem; tracking:4px;">
+          <button class="btn btn-accent" onclick="attemptUnlockVault()">আনলক</button>
+        </div>
+        <p id="vaultAuthError" style="color:var(--red); font-size:0.9rem; margin-top:10px; display:none;">❌ ভুল পিন! আবার চেষ্টা করুন।</p>
+      </div>
+
+      <div id="vaultContentScreen" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:var(--surface3); padding:10px; border-radius:8px;">
+          <span style="color:var(--accent); font-weight:600;">🔓 ভভল্ট ওপেন আছে</span>
+          <button class="btn btn-danger" style="padding:4px 10px; font-size:0.8rem;" onclick="lockVault()">🔒 ভল্ট লক করুন</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="card" style="background:var(--surface2);">
+            <div class="card-title" style="font-size:1rem;">📝 নতুন সংবেদনশীল তথ্য সেভ করুন</div>
+            <form id="vaultForm" onsubmit="saveVaultSecret(event)">
+              <div class="form-group">
+                <label> may তথ্যের শিরোনাম (Title)</label>
+                <input type="text" id="vTitle" placeholder="উদা: ইমেইল পাসওয়ার্ড, ব্যাংক পিন" required>
+              </div>
+              <div class="form-group">
+                <label>গোপন তথ্য (Secret Data)</label>
+                <textarea id="vSecret" rows="3" placeholder="এখানে অতি গোপনীয় তথ্যটি লিখুন..." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-accent" style="width:100%;">🔒 এনক্রিপ্ট ও সেভ</button>
+            </form>
+          </div>
+
+          <div class="card" style="background:var(--surface2);">
+            <div class="card-title" style="font-size:1rem;">📋 ভল্ট রেকর্ডস</div>
+            <div class="scrollable-panel" id="vaultItemsContainer">
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-settings" class="tab-panel">
+    <div class="card">
+      <div class="card-title">🎨 থিম ও ইউজার প্রিফারেন্স (Premium Themes Addition)</div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px;">
+        <button class="btn" onclick="changeTheme('dark')">🌌 Cyber Dark (Default)</button>
+        <button class="btn" onclick="changeTheme('comfort')">🌌 Comfort Blue</button>
+        <button class="btn" onclick="changeTheme('light')">☀️ Pure Light Theme</button>
+        <button class="btn" onclick="changeTheme('oled')">🕶️ OLED Pure Dark</button>
+        <button class="btn btn-accent" onclick="changeTheme('sakura')" style="border:2px solid var(--accent);">🌸 Sakura Blossom ✓ (ডিফল্ট)</button>
+        <button class="btn" onclick="changeTheme('ocean')">🌊 Ocean Breeze</button>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:var(--red);">
+      <div class="card-title" style="color:var(--red);">⚠️ ডেটা ফ্যাক্টরি রিসেট</div>
+      <button class="btn btn-danger" onclick="hardResetAppEngine()">🔥 সম্পূর্ণ ডেটা ডিলিট করুন</button>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div>ব্যবহারকারী: <span style="color:var(--text); font-weight:600;">মোহাম্মদ শাহিদুল ইসলাম</span></div>
+    <div>ডাটাবেজ: <span style="color:var(--accent);">লোকাল স্টোরেজ সিঙ্কড</span></div>
+  </div>
+
+</div>
+
+<script>
+// ══ GLOBAL DATABASE MANAGER OBJECT STRUCTURE ══
+const LS = {
+  get: (key, def) => { const r = localStorage.getItem(key); return r ? JSON.parse(r) : def; },
+  set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
+  
+  tasks: () => LS.get('mlp_tasks_v4', []),
+  saveTasks: (d) => LS.set('mlp_tasks_v4', d),
+  
+  ledger: () => LS.get('mlp_ledger_v4', []),
+  saveLedger: (d) => LS.set('mlp_ledger_v4', d),
+  
+  budgets: () => LS.get('mlp_budgets_v4', {}),
+  saveBudgets: (d) => LS.set('mlp_budgets_v4', d),
+  
+  // Custom Month Scoped Routines & Habit Structure
+  routinesMap: () => LS.get('mlp_routines_map_v4', {}),
+  saveRoutinesMap: (d) => LS.set('mlp_routines_map_v4', d),
+  
+  habitsMap: () => LS.get('mlp_habits_map_v4', {}),
+  saveHabitsMap: (d) => LS.set('mlp_habits_map_v4', d),
+  
+  habitTypesMap: () => LS.get('mlp_habit_types_map_v4', {}),
+  saveHabitTypesMap: (d) => LS.set('mlp_habit_types_map_v4', d),
+  
+  categoriesMap: () => LS.get('mlp_categories_map_v4', {}),
+  saveCategoriesMap: (d) => LS.set('mlp_categories_map_v4', d),
+  
+  vault: () => LS.get('mlp_vault_v4', []),
+  saveVault: (d) => LS.set('mlp_vault_v4', d),
+  
+  calEvents: () => LS.get('mlp_cal_events_v5', []),
+  saveCalEvents: (d) => LS.set('mlp_cal_events_v5', d),
+  
+  settings: () => LS.get('mlp_settings_v4', { theme: 'comfort', vaultPin: '1234' }),
+  saveSettings: (d) => LS.set('mlp_settings_v4', d)
+};
+
+// Global System Fallback Core Defaults
+const DEFAULT_CATEGORIES = ["বাজার ও সদাই", "যাতায়াত ও ফুয়েল", "পরিবার ও চিকিৎসা", "শিক্ষা ও বইপত্র", "ইউটিলিটি বিল", "অন্যান্য খরচ"];
+const DEFAULT_HABITS = ["জাপানি ভাষা প্র্যাকটিস (N5)", "শারীরিক ব্যায়াম", "বই বা জার্নাল পড়া"];
+const BASE_STATIC_ROUTINE = {
+  Sat: [{time:"08:30 - 09:15", desc:"C10 Math"}, {time:"09:15 - 10:00", desc:"J9 Basic"}],
+  Sun: [{time:"08:30 - 09:15", desc:"C10 Higher Math"}, {time:"11:00 - 11:45", desc:"Meeting"}],
+  Mon: [{time:"09:15 - 10:00", desc:"J10 Hiragana"}],
+  Tue: [{time:"08:30 - 09:15", desc:"C9 Math"}],
+  Wed: [{time:"10:15 - 11:00", desc:"C10 Math Revision"}],
+  Thu: [{time:"09:15 - 10:00", desc:"Weekly Review"}],
+  Fri: [{time:"16:00 - 17:30", desc:"জাপানি ভাষা সেলফ প্র্যাকটিস"}]
+};
+
+const BANG_MONTHS = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+
+// System State Variables
+let currentMonthIndex = 0; // Maps inside our absolute calendar sequence
+let monthsTimelineList = []; // Timeline array tracking up to Dec 2029
+let currentMonth = ""; // Format string "YYYY-MM"
+let isVaultUnlocked = false;
+
+// ══ APP BOOTLOADER ENGINE ══
+window.addEventListener('DOMContentLoaded', () => {
+  generateAbsoluteTimeline();
+  // Set sakura as default if no theme saved
+  const savedSettings = LS.settings();
+  if(!localStorage.getItem('mlp_settings_v4')) {
+    savedSettings.theme = 'sakura';
+    LS.saveSettings(savedSettings);
+  }
+  const theme = savedSettings.theme || 'sakura';
+  document.body.className = '';
+  if(theme !== 'dark') document.body.classList.add('theme-' + theme);
+  syncMonthContextUI();
+});
+
+// Requirement 1: Matrix timeline setup from 2026 to Dec 2029 (Avoid dropdown bloating)
+function generateAbsoluteTimeline() {
+  monthsTimelineList = [];
+  const startYear = 2026;
+  const endYear = 2029;
+  
+  for(let y = startYear; y <= endYear; y++) {
+    for(let m = 1; m <= 12; m++) {
+      monthsTimelineList.push({
+        code: `${y}-${String(m).padStart(2, '0')}`,
+        year: y,
+        monthNum: m,
+        label: `${BANG_MONTHS[m-1]} ${y}`
+      });
+    }
+  }
+  
+  // Set default index tracking to match the host system's today month
+  const today = new Date();
+  const matchCode = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  let idx = monthsTimelineList.findIndex(i => i.code === matchCode);
+  currentMonthIndex = idx !== -1 ? idx : 5; // fallback June 2026 if out of scope
+  currentMonth = monthsTimelineList[currentMonthIndex].code;
+}
+
+function syncMonthContextUI() {
+  const mObj = monthsTimelineList[currentMonthIndex];
+  currentMonth = mObj.code;
+  
+  // Update Header Labels
+  document.getElementById('monthLabelDisplay').textContent = mObj.label;
+  document.getElementById('printMonthName').textContent = mObj.label;
+  
+  // Requirement 3: Conditional Migration Notification Bar Trigger
+  checkMigrationRequirement();
+  
+  // Core Interface Refresh
+  renderAllModules();
+  
+  // Automatic AI Assessment Run
+  generateAiSummaryAutomated();
+}
+
+function navigateMonth(dir) {
+  const target = currentMonthIndex + dir;
+  if(target >= 0 && target < monthsTimelineList.length) {
+    currentMonthIndex = target;
+    syncMonthContextUI();
+  }
+}
+
+// Requirement 3: Check if data needs copying from past months
+function checkMigrationRequirement() {
+  const rMap = LS.routinesMap();
+  const banner = document.getElementById('migrationActionBanner');
+  
+  // If month has records, hide banner
+  if(rMap[currentMonth] && Object.keys(rMap[currentMonth]).length > 0) {
+    banner.style.display = "none";
+  } else {
+    banner.style.display = "flex";
+  }
+}
+
+// Requirement 3: Execute copying structure from closest previous active month configuration
+function triggerDataMigration() {
+  const rMap = LS.routinesMap();
+  const hMap = LS.habitsMap();
+  const htMap = LS.habitTypesMap();
+  const catMap = LS.categoriesMap();
+  
+  let sourceMonth = null;
+  // Traverse backwards through timeline to catch nearest month setup
+  for(let i = currentMonthIndex - 1; i >= 0; i--) {
+    let code = monthsTimelineList[i].code;
+    if(rMap[code] && Object.keys(rMap[code]).length > 0) {
+      sourceMonth = code;
+      break;
+    }
+  }
+  
+  // Fallbacks definitions if no previous month configurations exist
+  rMap[currentMonth] = sourceMonth ? JSON.parse(JSON.stringify(rMap[sourceMonth])) : JSON.parse(JSON.stringify(BASE_STATIC_ROUTINE));
+  htMap[currentMonth] = sourceMonth ? [...(htMap[sourceMonth] || [])] : [...DEFAULT_HABITS];
+  catMap[currentMonth] = sourceMonth ? [...(catMap[sourceMonth] || [])] : [...DEFAULT_CATEGORIES];
+  
+  // Save Migrated Frames
+  LS.saveRoutinesMap(rMap);
+  LS.saveHabitTypesMap(htMap);
+  LS.saveCategoriesMap(catMap);
+  
+  document.getElementById('migrationActionBanner').style.display = "none";
+  renderAllModules();
+  generateAiSummaryAutomated();
+  alert("গত মাসের সমস্ত কাস্টম রুটিন, অভ্যাস তালিকা এবং ক্যাটাগরি খাত সফলভাবে এই মাসে সিঙ্ক করা হয়েছে!");
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  
+  event.currentTarget.classList.add('active');
+  document.getElementById(`panel-${tabId}`).classList.add('active');
+}
+
+function renderAllModules() {
+  // Scopes safety synchronization checks
+  const rMap = LS.routinesMap(); if(!rMap[currentMonth]) rMap[currentMonth] = JSON.parse(JSON.stringify(BASE_STATIC_ROUTINE)); LS.saveRoutinesMap(rMap);
+  const htMap = LS.habitTypesMap(); if(!htMap[currentMonth]) htMap[currentMonth] = [...DEFAULT_HABITS]; LS.saveHabitTypesMap(htMap);
+  const catMap = LS.categoriesMap(); if(!catMap[currentMonth]) catMap[currentMonth] = [...DEFAULT_CATEGORIES]; LS.saveCategoriesMap(catMap);
+
+  renderDashboardTimeline();
+  renderDashboardTasks();
+  renderDashboardSchedule();
+  renderTasksModule();
+  renderRoutineModule();
+  renderHabitsGridModule();
+  renderBudgetMonitorModule();
+  renderLedgerTableModule();
+  renderVaultItemsModule();
+  renderCalendarModule();
+  updateLedgerCategoryDropdown();
+}
+
+function getDaysInMonthStr(mStr) {
+  const parts = mStr.split('-');
+  return new Date(parseInt(parts[0]), parseInt(parts[1]), 0).getDate();
+}
+
+// Cipher Mock Encapsulation
+const Cipher = {
+  encode: (t) => btoa(encodeURIComponent(t)),
+  decode: (b) => { try{ return decodeURIComponent(atob(b)); }catch(e){ return "ডিক্রিপশন ত্রুটি"; } }
+};
+
+// ════ MODULE: DASHBOARD ENGINE ════
+function renderDashboardTimeline() {
+  const d = new Date();
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const todayKey = daysOfWeek[d.getDay()];
+  
+  const bangDays = { Sat:"শনিবার", Sun:"রবিবার", Mon:"সোমবার", Tue:"মঙ্গলবার", Wed:"বুধবার", Thu:"বৃহস্পতিবার", Fri:"শুক্রবার" };
+  document.getElementById('timelineTitle').textContent = `🕒 আজকের সূচি ও টাইমলাইন (${bangDays[todayKey]})`;
+  
+  const currentRoutine = LS.routinesMap()[currentMonth] || BASE_STATIC_ROUTINE;
+  const todaySlots = currentRoutine[todayKey] || [];
+  const container = document.getElementById('dashTimelineContainer');
+  container.innerHTML = "";
+  
+  if(todaySlots.length === 0) {
+    container.innerHTML = `<p style="color:var(--dim); font-size:0.9rem; text-align:center; padding:15px;">오늘 আজ রুটিনে কোনো ক্লাস বা স্লট বরাদ্দ নেই।</p>`;
+    return;
+  }
+  
+  todaySlots.forEach(s => {
+    container.innerHTML += `
+      <div class="timeline-item">
+        <span style="font-weight:700; color:var(--text); margin-right:10px;">⏳ ${s.time}</span> — 
+        <span style="color:var(--accent2); font-weight:500;">${s.desc}</span>
+      </div>
+    `;
+  });
+}
+
+function renderDashboardTasks() {
+  const allTasks = LS.tasks().filter(t => t.month === currentMonth && !t.done);
+  const container = document.getElementById('dashTasksContainer');
+  container.innerHTML = "";
+  
+  if(allTasks.length === 0) {
+    container.innerHTML = `<p style="color:var(--dim); font-size:0.9rem; text-align:center; padding:15px;">🎉 কোনো পেন্ডিং জরুরি কাজ নেই!</p>`;
+    return;
+  }
+  
+  allTasks.slice(0, 5).forEach(t => {
+    let badgeCls = t.priority === 'high' ? 'badge-high' : (t.priority === 'medium' ? 'badge-mid' : 'badge-low');
+    container.innerHTML += `
+      <div class="task-item" style="padding:8px 12px;">
+        <div class="task-left">
+          <span class="badge ${badgeCls}">${t.priority}</span>
+          <span>${t.name}</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:2px;">
+          ${t.time ? `<span class="badge badge-blue" style="font-size:0.7rem;">🕒 ${t.time}</span>` : ''}
+          ${t.day ? `<span style="font-size:0.75rem; color:var(--accent2);">দিন: ${t.day}</span>` : ''}
+        </div>
+      </div>
+    `;
+  });
+}
+
+// ════ MODULE: TO-DO MANAGER (Requirement 2: Time Option Integrated) ════
+function renderTasksModule() {
+  const container = document.getElementById('taskListContainer');
+  container.innerHTML = "";
+  
+  const filtered = LS.tasks().filter(t => t.month === currentMonth);
+  document.getElementById('taskCountText').textContent = filtered.length;
+  
+  if(filtered.length === 0) {
+    container.innerHTML = `<p style="color:var(--dim); text-align:center; padding:20px;">এই মাসে কোনো টাস্ক এন্ট্রি করা হয়নি।</p>`;
+    return;
+  }
+  
+  filtered.sort((a,b) => (b.priority==='high') - (a.priority==='high'));
+  filtered.sort((a,b) => a.done - b.done);
+
+  filtered.forEach(t => {
+    let badgeCls = t.priority === 'high' ? 'badge-high' : (t.priority === 'medium' ? 'badge-mid' : 'badge-low');
+    let timeStr = (t.timeStart && t.timeEnd) ? `${t.timeStart} – ${t.timeEnd}` : (t.timeStart || t.time || '');
+    container.innerHTML += `
+      <div class="task-item ${t.done ? 'completed' : ''}" id="task-row-${t.id}" style="flex-direction:column; align-items:stretch; gap:0; padding:0; overflow:hidden;">
+        
+        <!-- Main row -->
+        <div style="display:flex; align-items:center; gap:10px; padding:10px 12px;">
+          <input type="checkbox" class="task-checkbox" ${t.done ? 'checked' : ''} onclick="toggleTaskStatus('${t.id}')">
+          <div style="flex:1; min-width:0;">
+            <div class="task-text">${t.name}</div>
+            <div class="task-meta">
+              <span class="badge ${badgeCls}">${t.priority}</span>
+              ${timeStr ? `<span class="badge badge-blue" style="font-size:0.7rem;">🕒 ${timeStr}</span>` : ''}
+              ${t.day ? `<span style="color:var(--accent2); font-size:0.8rem;">📅 ${t.day} তারিখ</span>` : ''}
+            </div>
+          </div>
+          <!-- Action buttons on right -->
+          <div style="display:flex; gap:5px; flex-shrink:0;">
+            <button title="নোট" class="btn" style="padding:4px 8px; font-size:0.75rem; background:var(--g-soft); border-color:var(--accent); color:var(--accent);" onclick="toggleTaskNote('${t.id}')">📝 নোট</button>
+            <button title="এডিট" class="btn" style="padding:4px 8px; font-size:0.75rem; background:var(--y-soft); border-color:var(--accent2); color:var(--accent2);" onclick="openEditTaskModal('${t.id}')">✏️</button>
+            <button title="মুছুন" class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteTask('${t.id}')">🗑️</button>
+          </div>
+        </div>
+
+        <!-- Note section (toggle) -->
+        <div id="note-section-${t.id}" style="display:${t.note ? 'block' : 'none'}; border-top:1px solid var(--border); background:var(--surface3); padding:8px 12px 10px 42px;">
+          <div style="font-size:0.78rem; color:var(--dim); margin-bottom:4px; font-weight:600;">📝 নোট:</div>
+          <div id="note-display-${t.id}" style="font-size:0.88rem; color:var(--text); line-height:1.5;">${t.note || ''}</div>
+          <textarea id="note-input-${t.id}" rows="2" placeholder="নোট লিখুন..." style="display:none; width:100%; margin-top:6px; background:var(--surface2); border:1px solid var(--border); padding:7px 10px; border-radius:7px; color:var(--text); font-size:0.88rem; resize:vertical;">${t.note || ''}</textarea>
+          <div id="note-edit-btns-${t.id}" style="display:none; margin-top:6px; display:none; gap:6px;">
+            <button class="btn btn-accent" style="padding:3px 10px; font-size:0.78rem;" onclick="saveTaskNote('${t.id}')">💾 সেভ</button>
+            <button class="btn" style="padding:3px 10px; font-size:0.78rem;" onclick="cancelNoteEdit('${t.id}', \`${(t.note||'').replace(/`/g,"'")}\`)">বাতিল</button>
+          </div>
+          <button id="note-edit-trigger-${t.id}" class="btn" style="padding:2px 8px; font-size:0.75rem; margin-top:5px; ${t.note ? '' : 'display:none;'}" onclick="startNoteEdit('${t.id}')">✏️ এডিট নোট</button>
+        </div>
+
+        <!-- Empty note prompt when toggled open but no note yet -->
+        <div id="note-empty-${t.id}" style="display:none; border-top:1px solid var(--border); background:var(--surface3); padding:8px 12px 10px 42px;">
+          <textarea id="note-new-input-${t.id}" rows="2" placeholder="এখানে নোট লিখুন..." style="width:100%; background:var(--surface2); border:1px solid var(--border); padding:7px 10px; border-radius:7px; color:var(--text); font-size:0.88rem; resize:vertical;"></textarea>
+          <div style="display:flex; gap:6px; margin-top:6px;">
+            <button class="btn btn-accent" style="padding:3px 10px; font-size:0.78rem;" onclick="saveNewNote('${t.id}')">💾 সেভ</button>
+            <button class="btn" style="padding:3px 10px; font-size:0.78rem;" onclick="hideNoteEmpty('${t.id}')">বাতিল</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+
+function timeToMinutes(t) {
+  if(!t) return -1;
+  const parts = t.split(':');
+  return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+}
+
+function checkTimeOverlap(dayNum, startTime, endTime, excludeId) {
+  if(!startTime || !endTime) return false;
+  const newStart = timeToMinutes(startTime);
+  const newEnd = timeToMinutes(endTime);
+  const tasks = LS.tasks().filter(t => t.month === currentMonth && t.day === dayNum && !t.done && t.id !== excludeId);
+  return tasks.some(t => {
+    if(!t.timeStart || !t.timeEnd) return false;
+    const s = timeToMinutes(t.timeStart), e = timeToMinutes(t.timeEnd);
+    return newStart < e && newEnd > s;
+  });
+}
+
+function addTask(e) {
+  e.preventDefault();
+  const name = document.getElementById('taskName').value.trim();
+  const priority = document.getElementById('taskPriority').value;
+  const day = document.getElementById('taskDay').value;
+  const timeStart = document.getElementById('taskTimeStart').value;
+  const timeEnd = document.getElementById('taskTimeEnd').value;
+  const note = document.getElementById('taskNote').value.trim();
+  
+  const dayNum = day ? parseInt(day) : null;
+  
+  // Overlap check
+  if(dayNum && timeStart && timeEnd && checkTimeOverlap(dayNum, timeStart, timeEnd, null)) {
+    document.getElementById('taskOverlapWarning').style.display = 'block';
+    return;
+  }
+  document.getElementById('taskOverlapWarning').style.display = 'none';
+  
+  const all = LS.tasks();
+  all.push({
+    id: 't_' + Date.now(),
+    month: currentMonth,
+    name: name,
+    priority: priority,
+    timeStart: timeStart || null,
+    timeEnd: timeEnd || null,
+    time: timeStart && timeEnd ? `${timeStart} – ${timeEnd}` : (timeStart || null),
+    day: dayNum,
+    note: note || null,
+    done: false
+  });
+  
+  LS.saveTasks(all);
+  document.getElementById('taskForm').reset();
+  renderTasksModule();
+  renderDashboardTasks();
+  renderDashboardSchedule();
+  renderCalendarModule();
+  generateAiSummaryAutomated();
+}
+
+function toggleTaskStatus(id) {
+  const all = LS.tasks();
+  const t = all.find(item => item.id === id);
+  if(t) t.done = !t.done;
+  LS.saveTasks(all);
+  renderTasksModule();
+  renderDashboardTasks();
+}
+
+function deleteTask(id) {
+  let all = LS.tasks();
+  all = all.filter(item => item.id !== id);
+  LS.saveTasks(all);
+  renderTasksModule();
+  renderDashboardTasks();
+  generateAiSummaryAutomated();
+}
+
+// ════ MODULE: ROUTINE MANAGEMENT MODULE ════
+function renderRoutineModule() {
+  const container = document.getElementById('routineGridContainer');
+  container.innerHTML = "";
+  
+  const currentRoutine = LS.routinesMap()[currentMonth] || BASE_STATIC_ROUTINE;
+  const daysBangla = { Sat:"শনিবার", Sun:"রবিবার", Mon:"সোমবার", Tue:"মঙ্গলবার", Wed:"বুধবার", Thu:"বৃহস্পতিবার", Fri:"শুক্রবার" };
+  
+  Object.keys(daysBangla).forEach(dayKey => {
+    const slots = currentRoutine[dayKey] || [];
+    let slotsHtml = "";
+    
+    slots.forEach((s, index) => {
+      slotsHtml += `
+        <div class="slot-item">
+          <button class="del-slot-btn" onclick="deleteRoutineSlot('${dayKey}', ${index})">×</button>
+          <div class="slot-time">⏳ ${s.time}</div>
+          <div class="slot-desc">${s.desc}</div>
+        </div>
+      `;
+    });
+    
+    container.innerHTML += `
+      <div class="routine-day-card">
+        <div class="day-title">
+          <span>${daysBangla[dayKey]}</span>
+          <span style="font-size:0.75rem; opacity:0.6;">(${slots.length})</span>
+        </div>
+        <div>${slotsHtml || '<p style="color:var(--dim); font-size:0.75rem; text-align:center;">স্লট খালি</p>'}</div>
+      </div>
+    `;
+  });
+}
+
+function addCustomRoutineSlot(e) {
+  e.preventDefault();
+  const day = document.getElementById('slotDay').value;
+  const timeStart = document.getElementById('slotTimeStart').value;
+  const timeEnd = document.getElementById('slotTimeEnd').value;
+  const desc = document.getElementById('slotDesc').value.trim();
+  const timeStr = (timeStart && timeEnd) ? `${timeStart} – ${timeEnd}` : timeStart;
+  
+  const rMap = LS.routinesMap();
+  if(!rMap[currentMonth]) rMap[currentMonth] = JSON.parse(JSON.stringify(BASE_STATIC_ROUTINE));
+  if(!rMap[currentMonth][day]) rMap[currentMonth][day] = [];
+  
+  rMap[currentMonth][day].push({ time: timeStr, desc: desc });
+  LS.saveRoutinesMap(rMap);
+  
+  document.getElementById('routineSlotForm').reset();
+  renderRoutineModule();
+  renderDashboardTimeline();
+}
+
+function deleteRoutineSlot(dayKey, index) {
+  const rMap = LS.routinesMap();
+  if(rMap[currentMonth] && rMap[currentMonth][dayKey]) {
+    rMap[currentMonth][dayKey].splice(index, 1);
+    LS.saveRoutinesMap(rMap);
+    renderRoutineModule();
+    renderDashboardTimeline();
+  }
+}
+
+// ════ MODULE: MONTHLY HABITS COMPONENT ════
+function renderHabitsGridModule() {
+  const rowsContainer = document.getElementById('habitRowsContainer');
+  rowsContainer.innerHTML = "";
+  
+  const hTypes = LS.habitTypesMap()[currentMonth] || [...DEFAULT_HABITS];
+  const dbHabits = LS.habitsMap();
+  const totalDays = getDaysInMonthStr(currentMonth);
+  
+  if(hTypes.length === 0) {
+    rowsContainer.innerHTML = `<p style="color:var(--dim); text-align:center; padding:15px;">কোনো ট্র্যাকিং অভ্যাস তালিকাভুক্ত নেই। নিচে যোগ করুন।</p>`;
+    return;
+  }
+  
+  hTypes.forEach(hName => {
+    let dayCellsHtml = "";
+    for(let d = 1; d <= totalDays; d++) {
+      let storageKey = `${currentMonth}_${hName}_${d}`;
+      let isDone = dbHabits[storageKey] === true;
+      dayCellsHtml += `<div class="grid-day-cell ${isDone ? 'done' : ''}" onclick="toggleHabitCell('${storageKey}')">${d}</div>`;
+    }
+    
+    rowsContainer.innerHTML += `
+      <div class="single-habit-row">
+        <div class="habit-row-header">
+          <div class="habit-row-title">🔄 ${hName}</div>
+          <button class="btn btn-danger" style="padding:2px 8px; font-size:0.7rem;" onclick="deleteHabitType('${hName}')">মুছুন</button>
+        </div>
+        <div class="month-grid-wrapper">
+          <div class="month-calendar-grid" style="grid-template-columns: repeat(${totalDays}, 30px);">
+            ${dayCellsHtml}
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function toggleHabitCell(key) {
+  const db = LS.habitsMap();
+  db[key] = !db[key];
+  LS.saveHabitsMap(db);
+  renderHabitsGridModule();
+}
+
+function addNewHabitType(e) {
+  e.preventDefault();
+  const input = document.getElementById('newHabitName');
+  const name = input.value.trim();
+  if(!name) return;
+  
+  const htMap = LS.habitTypesMap();
+  if(!htMap[currentMonth]) htMap[currentMonth] = [...DEFAULT_HABITS];
+  
+  if(!htMap[currentMonth].includes(name)) {
+    htMap[currentMonth].push(name);
+    LS.saveHabitTypesMap(htMap);
+  }
+  input.value = "";
+  renderHabitsGridModule();
+}
+
+function deleteHabitType(name) {
+  const htMap = LS.habitTypesMap();
+  if(htMap[currentMonth]) {
+    htMap[currentMonth] = htMap[currentMonth].filter(h => h !== name);
+    LS.saveHabitTypesMap(htMap);
+    renderHabitsGridModule();
+  }
+}
+
+// ════ MODULE: BUDGET MONITORING + LIVE EXPENDITURE (Requirement 4 & 5) ════
+function renderBudgetMonitorModule() {
+  const budgets = LS.budgets();
+  if(!budgets[currentMonth]) budgets[currentMonth] = { main: 0, sectors: {} };
+  
+  const curB = budgets[currentMonth];
+  const activeCategories = LS.categoriesMap()[currentMonth] || [...DEFAULT_CATEGORIES];
+  
+  let totalSectorAllocated = 0;
+  activeCategories.forEach(cat => {
+    totalSectorAllocated += (curB.sectors[cat] || 0);
+  });
+  
+  const deficitOrRemaining = curB.main - totalSectorAllocated;
+  
+  document.getElementById('bTotalVal').textContent = `৳${curB.main.toLocaleString()}`;
+  document.getElementById('bAllocatedVal').textContent = `৳${totalSectorAllocated.toLocaleString()}`;
+  
+  const statusValEl = document.getElementById('bStatusVal');
+  const msgEl = document.getElementById('budgetSummaryMessage');
+  
+  if(deficitOrRemaining < 0) {
+    statusValEl.textContent = `৳${deficitOrRemaining.toLocaleString()}`;
+    statusValEl.className = "b-status-val deficit-alert";
+    msgEl.innerHTML = `<b style="color:var(--red);">⚠️ বাজেট ঘাটতি: -৳${Math.abs(deficitOrRemaining).toLocaleString()} (বরাদ্দ বেশি হয়েছে!)</b>`;
+  } else {
+    statusValEl.textContent = `৳${deficitOrRemaining.toLocaleString()}`;
+    statusValEl.className = "b-status-val surplus-alert";
+    msgEl.innerHTML = `<b style="color:var(--accent);">✓ অবশিষ্ট বাজেট তহবিল: ৳${deficitOrRemaining.toLocaleString()}</b>`;
+  }
+  
+  document.getElementById('mainBudgetInput').value = curB.main || "";
+  
+  // Render Config Fields Form and Process Bars
+  buildBudgetFormFields(curB.sectors, activeCategories);
+  buildCategoryProgressBars(curB.sectors, activeCategories);
+}
+
+// Requirement 4: Render dynamic forms matching variable channels list
+function buildBudgetFormFields(savedSectors, categoriesList) {
+  const container = document.getElementById('budgetFieldsContainer');
+  container.innerHTML = "";
+  
+  categoriesList.forEach(cat => {
+    let amt = savedSectors[cat] || "";
+    container.innerHTML += `
+      <div class="budget-field-row">
+        <span style="font-weight:500; font-size:0.95rem;">📂 ${cat}</span>
+        <div style="max-width:160px; display:flex; gap:6px; align-items:center;">
+          <input type="number" class="sector-budget-input" data-category="${cat}" value="${amt}" placeholder="৳ ০" style="padding:6px 10px; text-align:right;">
+          <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteBudgetCategory('${cat}')">🗑️</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// Requirement 5: Progress calculation mapping matching real-time ledger distributions
+function buildCategoryProgressBars(allocatedSectors, categoriesList) {
+  const container = document.getElementById('categoryMonitorGrid');
+  container.innerHTML = "";
+  
+  // Sum ledger outputs grouped by Category type inside the target scoped month
+  const ledgerRecords = LS.ledger().filter(r => r.month === currentMonth && r.type === 'debit');
+  const expenseMap = {};
+  
+  categoriesList.forEach(c => expenseMap[c] = 0);
+  ledgerRecords.forEach(r => {
+    if(expenseMap[r.category] !== undefined) {
+      expenseMap[r.category] += r.amount;
+    } else {
+      // Catch-all mapping logic for dynamically deleted structures
+      expenseMap[r.category] = r.amount;
+    }
+  });
+  
+  categoriesList.forEach(cat => {
+    const allocated = allocatedSectors[cat] || 0;
+    const spent = expenseMap[cat] || 0;
+    
+    let percentage = allocated > 0 ? Math.min((spent / allocated) * 100, 100) : (spent > 0 ? 100 : 0);
+    let isOver = spent > allocated && allocated > 0;
+    
+    container.innerHTML += `
+      <div class="category-monitor-card">
+        <div class="category-monitor-info">
+          <span>📂 ${cat}</span>
+          <span style="color:var(--dim);">৳${spent.toLocaleString()} / <b style="color:var(--accent2);">৳${allocated.toLocaleString()}</b></span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill ${isOver ? 'warning' : ''}" style="width: ${percentage}%;"></div>
+        </div>
+        ${isOver ? `<div style="color:var(--red); font-size:0.75rem; font-weight:600; text-align:right; margin-top:4px;">⚠️ বরাদ্দ বাজেট অতিক্রম করেছে! (-৳${(spent-allocated).toLocaleString()})</div>` : ''}
+      </div>
+    `;
+  });
+}
+
+function saveMainBudget() {
+  const val = parseInt(document.getElementById('mainBudgetInput').value) || 0;
+  const budgets = LS.budgets();
+  if(!budgets[currentMonth]) budgets[currentMonth] = { main: 0, sectors: {} };
+  
+  budgets[currentMonth].main = val;
+  LS.saveBudgets(budgets);
+  syncMonthContextUI();
+}
+
+function saveSectorBudgets() {
+  const budgets = LS.budgets();
+  if(!budgets[currentMonth]) budgets[currentMonth] = { main: 0, sectors: {} };
+  
+  const inputs = document.querySelectorAll('.sector-budget-input');
+  inputs.forEach(inp => {
+    let cat = inp.getAttribute('data-category');
+    let val = parseInt(inp.value) || 0;
+    budgets[currentMonth].sectors[cat] = val;
+  });
+  
+  LS.saveBudgets(budgets);
+  syncMonthContextUI();
+  alert("খাত ভিত্তিক কাস্টম বাজেট সফলভাবে সংরক্ষিত হয়েছে!");
+}
+
+// Requirement 4: Add dynamic category method
+function addNewBudgetCategory() {
+  const input = document.getElementById('newCategoryInput');
+  const name = input.value.trim();
+  if(!name) return;
+  
+  const catMap = LS.categoriesMap();
+  if(!catMap[currentMonth]) catMap[currentMonth] = [...DEFAULT_CATEGORIES];
+  
+  if(!catMap[currentMonth].includes(name)) {
+    catMap[currentMonth].push(name);
+    LS.saveCategoriesMap(catMap);
+  }
+  
+  input.value = "";
+  renderBudgetMonitorModule();
+  updateLedgerCategoryDropdown();
+}
+
+// Requirement 4: Delete custom category method
+function deleteBudgetCategory(name) {
+  if(confirm(`আপনি কি নিশ্চিতভাবে "${name}" খাতের বাজেট কাঠামো ও ক্যাটাগরি বাদ দিতে চান?`)) {
+    const catMap = LS.categoriesMap();
+    if(catMap[currentMonth]) {
+      catMap[currentMonth] = catMap[currentMonth].filter(c => c !== name);
+      LS.saveCategoriesMap(catMap);
+      
+      // Clean budget mappings structural records for data safety
+      const budgets = LS.budgets();
+      if(budgets[currentMonth] && budgets[currentMonth].sectors[name]) {
+        delete budgets[currentMonth].sectors[name];
+        LS.saveBudgets(budgets);
+      }
+      
+      syncMonthContextUI();
+    }
+  }
+}
+
+// ════ MODULE: LEDGER REGISTRATION DATA ════
+function renderLedgerTableModule() {
+  const tbody = document.getElementById('ledgerTableBody');
+  tbody.innerHTML = "";
+  
+  const filteredRecords = LS.ledger().filter(r => r.month === currentMonth);
+  if(filteredRecords.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--dim); padding:20px;">এই মাসের জন্য কোনো লেনদেনের খতিয়ান পাওয়া যায়নি।</td></tr>`;
+    return;
+  }
+  
+  filteredRecords.sort((a,b) => b.day - a.day);
+  filteredRecords.forEach(r => {
+    let typeText = r.type === 'credit' ? 'আয় (+)' : 'খরচ (-)';
+    let typeCls = r.type === 'credit' ? 'amt-credit' : 'amt-debit';
+    
+    tbody.innerHTML += `
+      <tr>
+        <td><b>${r.day} তারিখ</b></td>
+        <td>${r.title}</td>
+        <td><span style="color:var(--dim); font-size:0.85rem;">📂 ${r.category}</span></td>
+        <td><span class="${typeCls}">${typeText}</span></td>
+        <td class="${typeCls}">৳${r.amount.toLocaleString()}</td>
+        <td><button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteLedgerRecord('${r.id}')">🗑️</button></td>
+      </tr>
+    `;
+  });
+}
+
+function addLedgerRecord(e) {
+  e.preventDefault();
+  const title = document.getElementById('ledTitle').value.trim();
+  const type = document.getElementById('ledType').value;
+  const category = document.getElementById('ledCategory').value;
+  const amount = parseInt(document.getElementById('ledAmount').value) || 0;
+  const day = document.getElementById('ledDay').value;
+  
+  const all = LS.ledger();
+  all.push({
+    id: 'led_' + Date.now(),
+    month: currentMonth,
+    title: title,
+    type: type,
+    category: category,
+    amount: amount,
+    day: day ? parseInt(day) : new Date().getDate()
+  });
+  
+  LS.saveLedger(all);
+  document.getElementById('ledgerForm').reset();
+  syncMonthContextUI();
+}
+
+function deleteLedgerRecord(id) {
+  let all = LS.ledger();
+  all = all.filter(r => r.id !== id);
+  LS.saveLedger(all);
+  syncMonthContextUI();
+}
+
+function updateLedgerCategoryDropdown() {
+  const select = document.getElementById('ledCategory');
+  const type = document.getElementById('ledType').value;
+  select.innerHTML = "";
+  
+  if(type === 'credit') {
+    let opt = document.createElement('option');
+    opt.value = "অন্যান্য আয়"; opt.textContent = "অন্যান্য আয় (বেতন/টিউশনি)";
+    select.appendChild(opt);
+  } else {
+    const activeCategories = LS.categoriesMap()[currentMonth] || [...DEFAULT_CATEGORIES];
+    activeCategories.forEach(cat => {
+      let opt = document.createElement('option');
+      opt.value = cat; opt.textContent = cat;
+      select.appendChild(opt);
+    });
+  }
+}
+
+function toggleLedgerCategorySelect() {
+  updateLedgerCategoryDropdown();
+}
+
+// ════ MODULE: INFORMATION SECURE VAULT ════
+function attemptUnlockVault() {
+  const input = document.getElementById('vaultPinInput').value;
+  const sets = LS.settings();
+  
+  if(input === sets.vaultPin) {
+    isVaultUnlocked = true;
+    document.getElementById('vaultLockScreen').style.display = "none";
+    document.getElementById('vaultContentScreen').style.display = "block";
+    renderVaultItemsModule();
+    document.getElementById('vaultPinInput').value = "";
+    document.getElementById('vaultAuthError').style.display = "none";
+  } else {
+    document.getElementById('vaultAuthError').style.display = "block";
+  }
+}
+
+function lockVault() {
+  isVaultUnlocked = false;
+  document.getElementById('vaultLockScreen').style.display = "block";
+  document.getElementById('vaultContentScreen').style.display = "none";
+}
+
+function renderVaultItemsModule() {
+  if(!isVaultUnlocked) return;
+  const container = document.getElementById('vaultItemsContainer');
+  container.innerHTML = "";
+  
+  const secrets = LS.vault();
+  if(secrets.length === 0) {
+    container.innerHTML = `<p style="color:var(--dim); font-size:0.9rem; text-align:center; padding:15px;">ভল্ট সম্পূর্ণ খালি।</p>`;
+    return;
+  }
+  
+  secrets.forEach((s, index) => {
+    let decryptedSecret = Cipher.decode(s.secretCipher);
+    container.innerHTML += `
+      <div class="vault-item">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <b style="font-size:0.95rem; color:var(--text);">📌 ${s.title}</b>
+          <button class="btn btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="deleteVaultSecret(${index})">মুছুন</button>
+        </div>
+        <div class="vault-secret">${decryptedSecret}</div>
+      </div>
+    `;
+  });
+}
+
+function saveVaultSecret(e) {
+  e.preventDefault();
+  const title = document.getElementById('vTitle').value.trim();
+  const secretText = document.getElementById('vSecret').value.trim();
+  
+  const secrets = LS.vault();
+  secrets.push({ title: title, secretCipher: Cipher.encode(secretText) });
+  LS.saveVault(secrets);
+  
+  document.getElementById('vaultForm').reset();
+  renderVaultItemsModule();
+}
+
+function deleteVaultSecret(idx) {
+  const secrets = LS.vault();
+  secrets.splice(idx, 1);
+  LS.saveVault(secrets);
+  renderVaultItemsModule();
+}
+
+// ════ MODULE: THEME MANAGEMENT CONFIG ════
+function changeTheme(themeName) {
+  document.body.className = "";
+  if(themeName !== 'dark') document.body.classList.add(`theme-${themeName}`);
+  
+  const config = LS.settings();
+  config.theme = themeName;
+  LS.saveSettings(config);
+}
+
+function applySavedTheme() {
+  const config = LS.settings();
+  const theme = config.theme || 'sakura';
+  document.body.className = "";
+  if(theme !== 'dark') document.body.classList.add(`theme-${theme}`);
+}
+
+function hardResetAppEngine() {
+  if(confirm("⚠️ সাবধান! এটি আপনার সেভ করা সমস্ত কাস্টম ডেটা ডিলিট করে দেবে। আপনি কি নিশ্চিত?")) {
+    localStorage.clear();
+    window.location.reload();
+  }
+}
+
+// ════ AUTOMATED REAL-TIME AI SUMMARY CONTEXT DRIVER ════
+function generateAiSummaryAutomated() {
+  const d = new Date();
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const todayKey = daysOfWeek[d.getDay()];
+  
+  const currentRoutine = LS.routinesMap()[currentMonth] || BASE_STATIC_ROUTINE;
+  const todayRoutine = currentRoutine[todayKey] || [];
+  const pendingTasks = LS.tasks().filter(t => t.month === currentMonth && !t.done);
+  
+  // Expenses calculations
+  const budgets = LS.budgets()[currentMonth] || { main: 0, sectors: {} };
+  const activeCategories = LS.categoriesMap()[currentMonth] || [...DEFAULT_CATEGORIES];
+  
+  let totalSectorAllocated = 0;
+  activeCategories.forEach(c => totalSectorAllocated += (budgets.sectors[c] || 0));
+  const budgetDiff = budgets.main - totalSectorAllocated;
+  
+  let outputText = `<b>🤖 রিয়েল-টাইম এআই পার্সোনাল অ্যাসিস্ট্যান্ট ফিডব্যাক:</b><br><br>`;
+  
+  // Budget Alert Status
+  if(budgetDiff < 0) {
+    outputText += `• 🟥 <span style="color:var(--red); font-weight:600;">বাজেট রিস্ক:</span> আপনার কাস্টম খাতগুলোর মোট বরাদ্দ মূল বাজেটকে ছাড়িয়ে গেছে (ঘাটতি: ৳${Math.abs(budgetDiff).toLocaleString()} )। দয়া করে বাজেট ট্যাবে গিয়ে রি-অ্যালোকেশন ঠিক করুন।<br>`;
+  } else {
+    outputText += `• 🟩 <span style="color:var(--accent); font-weight:600;">আর্থিক ব্যালেন্স:</span> চলতি মাসে এখনও ৳${budgetDiff.toLocaleString()} অবণ্টিত বা অতিরিক্ত তহবিল রয়েছে।<br>`;
+  }
+  
+  // Routine counts Advice
+  if(todayRoutine.length > 0) {
+    let classes = todayRoutine.map(c => `<span style="color:var(--accent2);">${c.desc} (${c.time})</span>`);
+    outputText += `• 📚 আজকের সাপ্তাহিক রুটিন অনুযায়ী আপনার <b>${todayRoutine.length}টি ক্লাস/টাস্ক</b> নির্ধারিত আছে: ${classes.join(', ')} ।<br>`;
+  } else {
+    outputText += `• 📅 আজ প্রাতিষ্ঠানিক রুটিনে কোনো ক্লাস ম্যাপ করা নেই। সেলফ-লার্নিং প্র্যাকটিস করতে পারেন।<br>`;
+  }
+  
+  // Tasks mapping
+  if(pendingTasks.length > 0) {
+    const highPrio = pendingTasks.filter(t => t.priority === 'high');
+    outputText += `• 📋 এই মাসে আপনার আরও <b>${pendingTasks.length}টি কাজ পেন্ডিং</b> রয়েছে। `;
+    if(highPrio.length > 0) {
+      outputText += `বিশেষ করে উচ্চ অগ্রাধিকারের কাজ: <span style="color:var(--red); font-weight:600;">"${highPrio[0].name}"</span> আগে শেষ করার পরামর্শ দেওয়া হলো।`;
+    }
+    outputText += `<br>`;
+  } else {
+    outputText += `• 🎉 চমৎকার! ফিল্টার করা মাসে কোনো পেন্ডিং বা অসমাপ্ত কাজ বাকি নেই।<br>`;
+  }
+  
+  outputText += `<br><i style="color:var(--accent); font-size:0.8rem;">💡 প্রফেশনাল টিপস: জাপানি ভাষা (JLPT N5) এর রুটিন প্র্যাকটিস আজ কমপ্লিট করে পুরো মাসের হ্যাবিট গ্রিডে সবুজ মার্ক বজায় রাখুন!</i>`;
+  
+  document.getElementById('aiAdvOutput').innerHTML = outputText;
+}
+
+// ════ MODULE: DAILY SCHEDULE DASHBOARD ════
+function renderDashboardSchedule() {
+  const container = document.getElementById('dailyScheduleContainer');
+  const titleEl = document.getElementById('dailyScheduleTitle');
+  if(!container) return;
+  
+  const today = new Date();
+  const todayDay = today.getDate();
+  const bangDayNames = ['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+  const dayKeys = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const todayKey = dayKeys[today.getDay()];
+  
+  titleEl.textContent = `📋 আজকের পূর্ণ টাইম শিডিউল (${todayDay} তারিখ, ${bangDayNames[today.getDay()]})`;
+  
+  // Collect routine slots for today
+  const rMap = LS.routinesMap()[currentMonth] || BASE_STATIC_ROUTINE;
+  const routineSlots = (rMap[todayKey] || []).map(s => ({ label: s.desc, time: s.time, type: 'routine' }));
+  
+  // Collect tasks for today
+  const taskSlots = LS.tasks()
+    .filter(t => t.month === currentMonth && t.day === todayDay && !t.done && t.timeStart)
+    .map(t => ({ label: t.name, time: t.timeStart && t.timeEnd ? `${t.timeStart} – ${t.timeEnd}` : t.timeStart, type: 'task', priority: t.priority }));
+  
+  // Collect calendar events for today
+  const evSlots = LS.calEvents()
+    .filter(e => e.month === currentMonth && parseInt(e.day) === todayDay)
+    .map(e => ({ label: e.title, time: e.start && e.end ? `${e.start} – ${e.end}` : (e.start || ''), type: 'event', color: e.color }));
+  
+  const all = [...routineSlots, ...taskSlots, ...evSlots];
+  
+  // Sort by time
+  all.sort((a,b) => {
+    const ta = a.time ? a.time.split('–')[0].trim() : '23:59';
+    const tb = b.time ? b.time.split('–')[0].trim() : '23:59';
+    return ta.localeCompare(tb);
+  });
+  
+  if(all.length === 0) {
+    container.innerHTML = `<p style="color:var(--dim); font-size:0.9rem; text-align:center; padding:15px;">আজকের জন্য কোনো শিডিউল এন্ট্রি নেই।</p>`;
+    return;
+  }
+  
+  const colorMap = { routine: 'var(--blue)', task: 'var(--accent)', event: 'var(--accent2)', high: 'var(--red)', medium: 'var(--accent2)', low: 'var(--accent)' };
+  container.innerHTML = '';
+  all.forEach(item => {
+    const color = item.type === 'task' ? colorMap[item.priority] : colorMap[item.type];
+    const icon = item.type === 'routine' ? '📚' : item.type === 'task' ? '✅' : '📅';
+    container.innerHTML += `
+      <div style="display:flex; align-items:center; gap:10px; background:var(--surface2); border-left:4px solid ${color}; padding:8px 12px; border-radius:0 8px 8px 0;">
+        <span style="font-size:1.1rem;">${icon}</span>
+        <span style="font-weight:700; color:var(--text); min-width:110px; font-size:0.85rem;">${item.time || '—'}</span>
+        <span style="color:var(--text); font-size:0.9rem;">${item.label}</span>
+      </div>`;
+  });
+}
+
+// ════ MODULE: CALENDAR ENGINE ════
+function renderCalendarModule() {
+  const mObj = monthsTimelineList[currentMonthIndex];
+  const el = document.getElementById('calMonthTitle');
+  if(el) el.textContent = mObj.label;
+  
+  const grid = document.getElementById('calendarGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  
+  const year = mObj.year, month = mObj.monthNum;
+  const firstDay = new Date(year, month - 1, 1).getDay(); // 0=Sun
+  const totalDays = getDaysInMonthStr(currentMonth);
+  
+  const tasks = LS.tasks().filter(t => t.month === currentMonth);
+  const events = LS.calEvents().filter(e => e.month === currentMonth);
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === year && (today.getMonth() + 1) === month;
+  
+  // Empty cells for first day offset
+  for(let i = 0; i < firstDay; i++) {
+    grid.innerHTML += `<div style="min-height:70px;"></div>`;
+  }
+  
+  for(let d = 1; d <= totalDays; d++) {
+    const dayTasks = tasks.filter(t => t.day === d);
+    const dayEvents = events.filter(e => parseInt(e.day) === d);
+    const isToday = isCurrentMonth && today.getDate() === d;
+    const hasItems = dayTasks.length > 0 || dayEvents.length > 0;
+    
+    let itemsHtml = '';
+    dayEvents.slice(0, 2).forEach(ev => {
+      const colorVar = `var(--${ev.color || 'accent'})`;
+      itemsHtml += `<div style="font-size:0.68rem; background:${colorVar}22; color:${colorVar}; padding:1px 4px; border-radius:3px; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${ev.title}</div>`;
+    });
+    dayTasks.filter(t => !t.done).slice(0, 2).forEach(t => {
+      itemsHtml += `<div style="font-size:0.68rem; background:var(--surface3); color:var(--dim); padding:1px 4px; border-radius:3px; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">✅ ${t.name}</div>`;
+    });
+    if(dayTasks.length + dayEvents.length > 4) {
+      itemsHtml += `<div style="font-size:0.65rem; color:var(--dim); margin-top:2px;">+${(dayTasks.length + dayEvents.length - 4)} আরও</div>`;
+    }
+    
+    grid.innerHTML += `
+      <div onclick="showCalDayDetail(${d})" style="
+        min-height:70px; background:${isToday ? 'var(--accent)22' : 'var(--surface2)'}; 
+        border:${isToday ? '2px solid var(--accent)' : '1px solid var(--border)'}; 
+        border-radius:8px; padding:6px; cursor:pointer; transition:all 0.15s;
+      " onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background='${isToday ? 'var(--accent)22' : 'var(--surface2)'}'" >
+        <div style="font-weight:700; font-size:0.85rem; color:${isToday ? 'var(--accent)' : 'var(--text)'};">${d}${isToday ? ' ◀' : ''}</div>
+        ${itemsHtml}
+      </div>`;
+  }
+}
+
+function showCalDayDetail(day) {
+  const panel = document.getElementById('calDayDetailPanel');
+  const title = document.getElementById('calDayDetailTitle');
+  const content = document.getElementById('calDayDetailContent');
+  if(!panel) return;
+  
+  const mObj = monthsTimelineList[currentMonthIndex];
+  title.textContent = `${day} ${mObj.label} — দিনের পূর্ণ বিবরণ`;
+  
+  const tasks = LS.tasks().filter(t => t.month === currentMonth && t.day === day);
+  const events = LS.calEvents().filter(e => e.month === currentMonth && parseInt(e.day) === day);
+  
+  let html = '';
+  
+  if(events.length > 0) {
+    html += `<div style="font-weight:600; color:var(--accent2); margin-bottom:8px;">📅 ইভেন্টসমূহ:</div>`;
+    events.forEach((ev, idx) => {
+      const colorVar = `var(--${ev.color || 'accent'})`;
+      html += `
+        <div style="background:var(--surface2); border-left:4px solid ${colorVar}; padding:10px 12px; border-radius:0 8px 8px 0; margin-bottom:8px; display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div style="font-weight:600;">${ev.title}</div>
+            ${ev.start ? `<div style="font-size:0.82rem; color:var(--dim);">🕒 ${ev.start}${ev.end ? ' – ' + ev.end : ''}</div>` : ''}
+            ${ev.note ? `<div style="font-size:0.82rem; color:var(--dim); margin-top:4px;">📝 ${ev.note}</div>` : ''}
+          </div>
+          <button class="btn btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="deleteCalEvent(${idx}, ${day})">মুছুন</button>
+        </div>`;
+    });
+  }
+  
+  if(tasks.length > 0) {
+    html += `<div style="font-weight:600; color:var(--accent); margin-bottom:8px; margin-top:${events.length>0?'12px':'0'};">✅ টাস্কসমূহ:</div>`;
+    tasks.forEach(t => {
+      let badgeCls = t.priority === 'high' ? 'badge-high' : (t.priority === 'medium' ? 'badge-mid' : 'badge-low');
+      let timeStr = t.timeStart && t.timeEnd ? `${t.timeStart} – ${t.timeEnd}` : (t.timeStart || t.time || '');
+      html += `
+        <div class="task-item ${t.done ? 'completed' : ''}" style="margin-bottom:6px;">
+          <div class="task-left">
+            <input type="checkbox" class="task-checkbox" ${t.done ? 'checked' : ''} onclick="toggleTaskStatus('${t.id}'); showCalDayDetail(${day});">
+            <div>
+              <div class="task-text">${t.name}</div>
+              <div class="task-meta">
+                <span class="badge ${badgeCls}">${t.priority}</span>
+                ${timeStr ? `<span class="badge badge-blue" style="font-size:0.7rem;">🕒 ${timeStr}</span>` : ''}
+              </div>
+              ${t.note ? `<div style="font-size:0.8rem; color:var(--dim); margin-top:4px;">📝 ${t.note}</div>` : ''}
+            </div>
+          </div>
+        </div>`;
+    });
+  }
+  
+  if(html === '') {
+    html = `<p style="color:var(--dim); text-align:center; padding:20px;">এই দিনে কোনো কাজ বা ইভেন্ট নেই।<br><button class="btn btn-accent" style="margin-top:10px;" onclick="openCalendarEventModalForDay(${day})">➕ ইভেন্ট যোগ করুন</button></p>`;
+  } else {
+    html += `<button class="btn btn-accent" style="margin-top:10px;" onclick="openCalendarEventModalForDay(${day})">➕ এই দিনে ইভেন্ট যোগ করুন</button>`;
+  }
+  
+  content.innerHTML = html;
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function openCalendarEventModal() {
+  const modal = document.getElementById('calEventModal');
+  modal.style.display = 'flex';
+}
+
+function openCalendarEventModalForDay(day) {
+  document.getElementById('calEvDay').value = day;
+  openCalendarEventModal();
+}
+
+function closeCalendarEventModal() {
+  document.getElementById('calEventModal').style.display = 'none';
+}
+
+function saveCalendarEvent() {
+  const title = document.getElementById('calEvTitle').value.trim();
+  const day = document.getElementById('calEvDay').value;
+  const color = document.getElementById('calEvColor').value;
+  const start = document.getElementById('calEvStart').value;
+  const end = document.getElementById('calEvEnd').value;
+  const note = document.getElementById('calEvNote').value.trim();
+  
+  if(!title || !day) { alert('শিরোনাম ও তারিখ আবশ্যক!'); return; }
+  
+  const events = LS.calEvents();
+  events.push({ id: 'ev_'+Date.now(), month: currentMonth, title, day: parseInt(day), color, start: start||null, end: end||null, note: note||null });
+  LS.saveCalEvents(events);
+  
+  closeCalendarEventModal();
+  document.getElementById('calEvTitle').value = '';
+  document.getElementById('calEvDay').value = '';
+  document.getElementById('calEvStart').value = '';
+  document.getElementById('calEvEnd').value = '';
+  document.getElementById('calEvNote').value = '';
+  renderCalendarModule();
+  renderDashboardSchedule();
+}
+
+function deleteCalEvent(evIdx, day) {
+  const allEvents = LS.calEvents().filter(e => e.month === currentMonth && parseInt(e.day) === day);
+  const evToDelete = allEvents[evIdx];
+  if(!evToDelete) return;
+  let all = LS.calEvents().filter(e => e.id !== evToDelete.id);
+  LS.saveCalEvents(all);
+  renderCalendarModule();
+  showCalDayDetail(day);
+}
+
+// ════ MODULE: PRINT REPORT ENGINE ════
+function printMonthlyReport() {
+  const mObj = monthsTimelineList[currentMonthIndex];
+  const tasks = LS.tasks().filter(t => t.month === currentMonth);
+  const doneTasks = tasks.filter(t => t.done);
+  const pendTasks = tasks.filter(t => !t.done);
+  const ledger = LS.ledger().filter(r => r.month === currentMonth);
+  const totalIncome = ledger.filter(r => r.type === 'credit').reduce((s, r) => s + r.amount, 0);
+  const totalExpense = ledger.filter(r => r.type === 'debit').reduce((s, r) => s + r.amount, 0);
+  const budgets = LS.budgets()[currentMonth] || { main: 0, sectors: {} };
+  const hTypes = LS.habitTypesMap()[currentMonth] || DEFAULT_HABITS;
+  const dbHabits = LS.habitsMap();
+  const totalDays = getDaysInMonthStr(currentMonth);
+  const events = LS.calEvents().filter(e => e.month === currentMonth);
+  
+  let habitRows = hTypes.map(h => {
+    let done = 0;
+    for(let d=1;d<=totalDays;d++) { if(dbHabits[`${currentMonth}_${h}_${d}`]) done++; }
+    const pct = Math.round((done/totalDays)*100);
+    return `<tr><td>${h}</td><td>${done}/${totalDays} দিন</td><td>${pct}%</td></tr>`;
+  }).join('');
+  
+  const categories = LS.categoriesMap()[currentMonth] || DEFAULT_CATEGORIES;
+  const expMap = {};
+  categories.forEach(c => expMap[c] = 0);
+  ledger.filter(r=>r.type==='debit').forEach(r => { if(expMap[r.category] !== undefined) expMap[r.category] += r.amount; });
+  let catRows = categories.map(c => `<tr><td>${c}</td><td>৳${(budgets.sectors[c]||0).toLocaleString()}</td><td>৳${(expMap[c]||0).toLocaleString()}</td></tr>`).join('');
+  
+  let eventRows = events.map(ev => `<tr><td>${ev.day} তারিখ</td><td>${ev.title}</td><td>${ev.start||'—'}${ev.end?' – '+ev.end:''}</td></tr>`).join('');
+  
+  const reportWin = window.open('', '_blank');
+  reportWin.document.write(`<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>সহিদুল প্ল্যানার — ${mObj.label} রিপোর্ট</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; font-family:'Hind Siliguri',sans-serif; }
+  body { padding:15mm 15mm 15mm 15mm; color:#1a1a1a; font-size:10pt; line-height:1.5; }
+  h1 { font-size:18pt; color:#ff7b90; text-align:center; margin-bottom:4px; }
+  .sub { text-align:center; font-size:9pt; color:#666; margin-bottom:14px; border-bottom:2px solid #ff7b90; padding-bottom:8px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  .section { border:1px solid #ddd; border-radius:8px; padding:10px; }
+  .section h2 { font-size:10pt; font-weight:700; color:#ff7b90; border-bottom:1px solid #eee; padding-bottom:4px; margin-bottom:8px; }
+  table { width:100%; border-collapse:collapse; font-size:8.5pt; }
+  th { background:#fff5f7; color:#4a282e; padding:5px; text-align:left; border-bottom:2px solid #ffd0d6; font-size:8pt; }
+  td { padding:4px 5px; border-bottom:1px solid #f0e0e3; }
+  .stat-box { display:inline-block; width:48%; text-align:center; background:#fff5f7; border-radius:6px; padding:8px; margin-bottom:6px; }
+  .stat-val { font-size:14pt; font-weight:700; color:#ff7b90; }
+  .stat-label { font-size:7.5pt; color:#8c686e; }
+  .badge { display:inline-block; padding:1px 6px; border-radius:4px; font-size:7.5pt; font-weight:700; }
+  .high { background:#fdecea; color:#c0392b; }
+  .medium { background:#fff8e1; color:#b7770d; }
+  .low { background:#e8f5e9; color:#388e3c; }
+  .done { text-decoration:line-through; color:#aaa; }
+  footer { text-align:center; font-size:7.5pt; color:#aaa; margin-top:12px; border-top:1px solid #eee; padding-top:6px; }
+  @media print { @page { size:A4; margin:15mm; } body { padding:0; } }
+</style>
+</head>
+<body>
+<h1>🌸 সহিদুল প্ল্যানার</h1>
+<div class="sub">মান্থলি রিপোর্ট — ${mObj.label} | ব্যবহারকারী: মোহাম্মদ শাহিদুল ইসলাম</div>
+
+<div class="grid">
+  <div class="section">
+    <h2>📊 সামগ্রিক পরিসংখ্যান</h2>
+    <div style="text-align:center;">
+      <div class="stat-box"><div class="stat-val">${tasks.length}</div><div class="stat-label">মোট টাস্ক</div></div>
+      <div class="stat-box"><div class="stat-val">${doneTasks.length}</div><div class="stat-label">সম্পন্ন</div></div>
+      <div class="stat-box"><div class="stat-val">${pendTasks.length}</div><div class="stat-label">পেন্ডিং</div></div>
+      <div class="stat-box"><div class="stat-val">${tasks.length > 0 ? Math.round((doneTasks.length/tasks.length)*100) : 0}%</div><div class="stat-label">সাফল্যের হার</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2>💰 আর্থিক সারসংক্ষেপ</h2>
+    <div style="text-align:center;">
+      <div class="stat-box"><div class="stat-val" style="color:#16a34a;">৳${totalIncome.toLocaleString()}</div><div class="stat-label">মোট আয়</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:#dc2626;">৳${totalExpense.toLocaleString()}</div><div class="stat-label">মোট খরচ</div></div>
+      <div class="stat-box"><div class="stat-val">৳${budgets.main.toLocaleString()}</div><div class="stat-label">মূল বাজেট</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:${totalIncome-totalExpense>=0?'#16a34a':'#dc2626'};">৳${(totalIncome-totalExpense).toLocaleString()}</div><div class="stat-label">নেট ব্যালেন্স</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="section">
+    <h2>✅ পেন্ডিং টাস্কসমূহ (${pendTasks.length}টি)</h2>
+    <table><tr><th>কাজ</th><th>অগ্রাধিকার</th><th>তারিখ</th></tr>
+    ${pendTasks.slice(0,8).map(t=>`<tr><td>${t.name}</td><td><span class="badge ${t.priority}">${t.priority}</span></td><td>${t.day?t.day+' তারিখ':'—'}</td></tr>`).join('')}
+    ${pendTasks.length>8?`<tr><td colspan="3" style="color:#aaa; font-size:8pt;">...আরও ${pendTasks.length-8}টি</td></tr>`:''}
+    </table>
+  </div>
+  <div class="section">
+    <h2>📂 খাতভিত্তিক খরচ</h2>
+    <table><tr><th>খাত</th><th>বরাদ্দ</th><th>খরচ</th></tr>${catRows}</table>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="section">
+    <h2>🔁 অভ্যাস ট্র্যাকিং</h2>
+    <table><tr><th>অভ্যাস</th><th>সম্পন্ন</th><th>হার</th></tr>${habitRows||'<tr><td colspan="3" style="color:#aaa;">কোনো অভ্যাস নেই</td></tr>'}</table>
+  </div>
+  <div class="section">
+    <h2>📅 ক্যালেন্ডার ইভেন্ট (${events.length}টি)</h2>
+    <table><tr><th>তারিখ</th><th>ইভেন্ট</th><th>সময়</th></tr>${eventRows||'<tr><td colspan="3" style="color:#aaa;">কোনো ইভেন্ট নেই</td></tr>'}</table>
+  </div>
+</div>
+
+<footer>সহিদুল প্ল্যানার v5.0 | রিপোর্ট তৈরি: ${new Date().toLocaleDateString('bn-BD')} | সমস্ত তথ্য লোকাল স্টোরেজ থেকে সংগৃহীত</footer>
+<script>window.onload=()=>{window.print();}<\/script>
+</body></html>`);
+  reportWin.document.close();
+}
+
+
+// ════ NOTE & EDIT FUNCTIONS ════
+function toggleTaskNote(id) {
+  const t = LS.tasks().find(x => x.id === id);
+  if(!t) return;
+  const noteSection = document.getElementById('note-section-' + id);
+  const noteEmpty = document.getElementById('note-empty-' + id);
+  if(t.note) {
+    // Has note — toggle the note section
+    if(noteSection) noteSection.style.display = noteSection.style.display === 'none' ? 'block' : 'none';
+  } else {
+    // No note — toggle the empty input area
+    if(noteEmpty) noteEmpty.style.display = noteEmpty.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+function startNoteEdit(id) {
+  const display = document.getElementById('note-display-' + id);
+  const input = document.getElementById('note-input-' + id);
+  const editBtns = document.getElementById('note-edit-btns-' + id);
+  const editTrigger = document.getElementById('note-edit-trigger-' + id);
+  if(display) display.style.display = 'none';
+  if(input) { input.style.display = 'block'; input.focus(); }
+  if(editBtns) editBtns.style.display = 'flex';
+  if(editTrigger) editTrigger.style.display = 'none';
+}
+
+function cancelNoteEdit(id, originalNote) {
+  const display = document.getElementById('note-display-' + id);
+  const input = document.getElementById('note-input-' + id);
+  const editBtns = document.getElementById('note-edit-btns-' + id);
+  const editTrigger = document.getElementById('note-edit-trigger-' + id);
+  if(display) display.style.display = 'block';
+  if(input) { input.style.display = 'none'; input.value = originalNote; }
+  if(editBtns) editBtns.style.display = 'none';
+  if(editTrigger) editTrigger.style.display = '';
+}
+
+function saveTaskNote(id) {
+  const input = document.getElementById('note-input-' + id);
+  if(!input) return;
+  const newNote = input.value.trim();
+  const all = LS.tasks();
+  const t = all.find(x => x.id === id);
+  if(t) { t.note = newNote || null; LS.saveTasks(all); }
+  renderTasksModule();
+}
+
+function saveNewNote(id) {
+  const input = document.getElementById('note-new-input-' + id);
+  if(!input) return;
+  const newNote = input.value.trim();
+  if(!newNote) return;
+  const all = LS.tasks();
+  const t = all.find(x => x.id === id);
+  if(t) { t.note = newNote; LS.saveTasks(all); }
+  renderTasksModule();
+}
+
+function hideNoteEmpty(id) {
+  const el = document.getElementById('note-empty-' + id);
+  if(el) el.style.display = 'none';
+}
+
+// ════ EDIT TASK MODAL ════
+function openEditTaskModal(id) {
+  const t = LS.tasks().find(x => x.id === id);
+  if(!t) return;
+  
+  // Remove old modal if exists
+  const old = document.getElementById('editTaskModalOverlay');
+  if(old) old.remove();
+  
+  const overlay = document.createElement('div');
+  overlay.id = 'editTaskModalOverlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:300;display:flex;align-items:center;justify-content:center;';
+  
+  const timeStartVal = t.timeStart || '';
+  const timeEndVal = t.timeEnd || '';
+  const priorityOptions = ['high','medium','low'].map(p => 
+    `<option value="${p}" ${t.priority===p?'selected':''}>${p==='high'?'High (জরুরি)':p==='medium'?'Medium (স্বাভাবিক)':'Low (সাধারণ)'}</option>`
+  ).join('');
+  
+  overlay.innerHTML = `
+    <div style="background:var(--surface);border-radius:14px;padding:25px;max-width:440px;width:92%;border:1px solid var(--border);box-shadow:0 20px 50px rgba(0,0,0,0.35);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <b style="font-size:1.1rem;">✏️ টাস্ক এডিট করুন</b>
+        <button onclick="document.getElementById('editTaskModalOverlay').remove()" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:1.4rem;">✕</button>
+      </div>
+      <div class="form-group">
+        <label>কাজের বিবরণ</label>
+        <input type="text" id="et_name" value="${t.name.replace(/"/g,'&quot;')}" style="width:100%;background:var(--surface2);border:1px solid var(--border);padding:10px 14px;border-radius:8px;color:var(--text);font-size:0.95rem;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group">
+          <label>অগ্রাধিকার</label>
+          <select id="et_priority" style="width:100%;background:var(--surface2);border:1px solid var(--border);padding:10px;border-radius:8px;color:var(--text);">${priorityOptions}</select>
+        </div>
+        <div class="form-group">
+          <label>তারিখ (দিন)</label>
+          <input type="number" id="et_day" value="${t.day||''}" min="1" max="31" style="width:100%;background:var(--surface2);border:1px solid var(--border);padding:10px;border-radius:8px;color:var(--text);">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group">
+          <label>শুরুর সময়</label>
+          <input type="time" id="et_timeStart" value="${timeStartVal}" style="width:100%;background:var(--surface2);border:1px solid var(--border);padding:10px;border-radius:8px;color:var(--text);">
+        </div>
+        <div class="form-group">
+          <label>শেষের সময়</label>
+          <input type="time" id="et_timeEnd" value="${timeEndVal}" style="width:100%;background:var(--surface2);border:1px solid var(--border);padding:10px;border-radius:8px;color:var(--text);">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>নোট / মন্তব্য</label>
+        <textarea id="et_note" rows="3" style="width:100%;background:var(--surface2);border:1px solid var(--border);padding:10px;border-radius:8px;color:var(--text);font-size:0.9rem;resize:vertical;">${t.note||''}</textarea>
+      </div>
+      <button class="btn btn-accent" style="width:100%;margin-top:4px;" onclick="saveEditedTask('${id}')">💾 পরিবর্তন সেভ করুন</button>
+    </div>`;
+  
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) overlay.remove(); });
+}
+
+function saveEditedTask(id) {
+  const name = document.getElementById('et_name').value.trim();
+  const priority = document.getElementById('et_priority').value;
+  const day = document.getElementById('et_day').value;
+  const timeStart = document.getElementById('et_timeStart').value;
+  const timeEnd = document.getElementById('et_timeEnd').value;
+  const note = document.getElementById('et_note').value.trim();
+  
+  if(!name) { alert('কাজের বিবরণ লিখুন!'); return; }
+  
+  const all = LS.tasks();
+  const t = all.find(x => x.id === id);
+  if(t) {
+    t.name = name;
+    t.priority = priority;
+    t.day = day ? parseInt(day) : null;
+    t.timeStart = timeStart || null;
+    t.timeEnd = timeEnd || null;
+    t.time = timeStart && timeEnd ? `${timeStart} – ${timeEnd}` : (timeStart || null);
+    t.note = note || null;
+    LS.saveTasks(all);
+  }
+  
+  document.getElementById('editTaskModalOverlay').remove();
+  renderTasksModule();
+  renderDashboardTasks();
+  renderDashboardSchedule();
+  renderCalendarModule();
+}
+
+</script>
+</body>
+</html>
